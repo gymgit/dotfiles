@@ -107,7 +107,7 @@ map <leader>k <Plug>(easymotion-k)
 "map N <Plug>(easymotion-prev)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => EasyMotion
+" => EasyGrep
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:EasyGrepCommand=1
 nnoremap <leader>/ :Grep<space>
@@ -193,6 +193,12 @@ nnoremap <silent> <leader>gi :YcmCompleter GoToImprecise<CR>
 nnoremap <silent> <leader>gx :YcmCompleter GoToReferences<CR>
 nnoremap <silent> <leader>gt :YcmCompleter GetType<CR>
 nnoremap <silent> <leader>fi :YcmCompleter FixIt<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => SimpleFold
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:SimpylFold_fold_docstring = 0
+let g:SimpylFold_fold_import = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helpre Functions

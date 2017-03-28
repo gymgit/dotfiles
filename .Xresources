@@ -1,0 +1,38 @@
+! rofi
+rofi.modi: run
+rofi.font: monospace 15
+rofi.width: 50
+rofi.lines: 5
+rofi.columns: 1
+rofi.opacity: 100
+!                    bg       fg      altbg    hlbg     hlfg
+rofi.color-normal: #23292b, #dcdccc, #23292b, #4883ff, #dcdccc
+rofi.color-urgent: #23292b, #dcdccc, #23292b, #4883ff, #dcdccc
+rofi.color-active: #23292b, #dcdccc, #23292b, #4883ff, #dcdccc
+rofi.color-window: #23292b, #4883ff, #4883ff
+rofi.bw: 4
+rofi.location: 0
+rofi.padding: 10
+rofi.fuzzy: false
+rofi.separator-style: solid
+rofi.hide-scrollbar: true
+rofi.auto-select: false
+
+*background: #23292b
+*foreground: #dcdccc
+*color0:  #23292b
+*color8:  #546e7a
+*color1:  #f04600
+*color9:  #ff763e
+*color2:  #42d242
+*color10: #8efa83
+*color3:  #fad430
+*color11: #ffeb95
+*color4:  #4882ff
+*color12: #83aaff
+*color5:  #b916d7
+*color13: #da64ef
+*color6:  #3dd7ff
+*color14: #8ae7ff
+*color7:  #d6d6d6
+*color15: #dcdccc

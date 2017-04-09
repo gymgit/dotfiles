@@ -41,6 +41,27 @@ runif() {
     which $1 > /dev/null && trycmd ${@:2}
 }
 
+install_dein(){
+    DEINDIR="$DOTFILES/vim/vimrt/plugins/repos/github.com/Shougo/dein.vim"
+    if [[ ! -e "$DEINDIR" ]]; then
+        echo "[*] Installing dein Vim plugin manager"
+        trycmd git clone https://github.com/Shougo/dein.vim $DEINDIR
+
+    else
+        echo "[*] Dein already installed skipping"
+    fi
+
+}
+
+install_oh_my_zsh(){
+    if [[ ! -e "~/.oh-my-zsh" ]]; then
+        echo "[*] Installing oh-my-zsh"
+        trycmd sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    else
+        echo "[*] Oh-my-zsh already installed skipping"
+    fi
+}
+
 dohelp() {
     echo "Usage: $0 [OPTIONS]"
     echo -e "-df,--dot-files path:\n\tpath to the root directory of the dotfiles"
@@ -148,14 +169,14 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         trycmd "$SUDO pacman -Syu"
     fi
     
-    if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux)?" ; then
+    if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux, curl)?" ; then
         echo "[*] Installing essentials"
          
         if [[ ! -z "$APT" ]]; then
-            trycmd "$SUDO apt-get -y install git vim zsh tmux"
+            trycmd "$SUDO apt-get -y install git vim zsh tmux curl"
         elif [[ ! -z "$PAC" ]]; then
             # have to upgrade, partial upgrades suck
-            trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux"
+            trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl"
         fi
     fi
     # TODO add basic build tools, make, cmake, gcc, python2-3, pip, virtual env
@@ -189,30 +210,42 @@ fi
 if [[ -z "$SKIP_CONFIG" ]];then
 
     #files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
-    declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrc2;.vimrc" )
+    declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
+	    ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux"\
+	    ["compton"]="compton/compton.conf;.config/compton.conf"\
+	    ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc"\
+	    ["Xorg"]="Xorg/Xresources;.Xresources"\
+	    ["i3"]="i3/xinitrc;.xinitrc i3/.config/i3"\
+	    ["i3blocks"]="i3blocks/i3blocks;.i3blocks i3blocks;.config/i3blocks"\
+	    ["termite"]="termite;.config/termite")
 
     # create dotfiles_old in homedir
-    echo "[*] Creating $BACKUP for backup of any existing dotfiles in ~"
+    echo "[*] Creating $BACKUP for backup of any existing dotfiles"
     trycmd "mkdir -p $BACKUP"
 
     # TODO clone the dotfiles directory if needed
 
     # change to the dotfiles directory
-    echo "[*] Changing to the $DOTFILES directory"
-    trycmd "cd $DOTFILES"
+    # echo "[*] Changing to the $DOTFILES directory"
+    # trycmd "cd $DOTFILES"
 
     # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
     for app in ${!config[@]}; do
-        for file in ${config[$app]}; do
-            echo "$file"
-            IFS=';' read src dst <<< "$file"
-            
-            # TODO check if installed
-            echo "Moving any existing dotfile to $BACKUP"
-            # TODO leave it alone if already simlinked
-            runif $app "mv -r ~/$dst $BACKUP"
-            echo "Creating symlink to $file in home directory."
-            runif $app "ln -s $DOTFILES/$src ~/$dst"
-        done
+        echo "[*] Trying to install config for $app"
+        # check if app is installed
+        if [[ ! -z `which $app` ]]; then
+            for file in ${config[$app]}; do
+                IFS=';' read src dst <<< "$file"
+                
+                # TODO leave it alone if already simlinked
+                echo "[*] Moving ~/$dst to $BACKUP"
+                trycmd "mv -r ~/$dst $BACKUP/"
+                
+                echo "[*] Creating symlink to $DOTFILES/$src <- ~/$dst"
+                trycmd "ln -s $DOTFILES/$src ~/$dst"
+            done
+        else
+            echo "[*] $app is not installed. Skipping..."
+        fi
     done
 fi

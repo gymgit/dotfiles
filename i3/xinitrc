@@ -4,7 +4,7 @@
 [ -f /etc/xprofile ] && source /etc/xprofile
 [ -f ~/.xprofile ] && source ~/.xprofile
 
-cat ~/.config/i3/config.common > ~/.config/i3/config
+[ -f ~/.config/i3/config.common ] && cat ~/.config/i3/config.common > ~/.config/i3/config
 [ -f ~/.config/i3/config.local ] && cat ~/.config/i3/config.local >> ~/.config/i3/config
 
 exec i3

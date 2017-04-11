@@ -16,8 +16,3 @@ bindsym XF86AudioMicMute exec --no-startup-id "pulseaudio-ctl mute-input"
 bindsym XF86AudioRaiseVolume exec --no-startup-id "pulseaudio-ctl up 5"
 bindsym XF86AudioLowerVolume exec --no-startup-id "pulseaudio-ctl down 5"
 
-
-# bindsym scratchpad
-bindsym $mod+semicolon scratchpad show
-bindsym $mod+Shift+semicolon move scratchpad
-

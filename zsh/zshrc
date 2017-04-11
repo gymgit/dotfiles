@@ -98,7 +98,7 @@ source /usr/bin/virtualenvwrapper.sh
 alias yolo="yaourt"
 alias sl="ls"
 alias packman="pacman"
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+#alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # bindings
 bindkey -e
 bindkey "^P" up-line-or-search

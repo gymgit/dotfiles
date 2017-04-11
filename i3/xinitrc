@@ -1,2 +1,10 @@
 #!/bin/sh
+
+# Make sure this is before the 'exec' command or it won't be sourced.
+[ -f /etc/xprofile ] && source /etc/xprofile
+[ -f ~/.xprofile ] && source ~/.xprofile
+
+cat ~/.config/i3/config.common > ~/.config/i3/config
+[ -f ~/.config/i3/config.local ] && cat ~/.config/i3/config.local >> ~/.config/i3/config
+
 exec i3

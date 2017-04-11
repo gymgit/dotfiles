@@ -43,9 +43,10 @@ runif() {
 
 install_dein(){
     DEINDIR="$DOTFILES/vim/vimrt/plugins/repos/github.com/Shougo/dein.vim"
-    if [[ ! -e "$DEINDIR" ]]; then
+    if [[ ! -e $DEINDIR ]]; then
         echo "[*] Installing dein Vim plugin manager"
         trycmd git clone https://github.com/Shougo/dein.vim $DEINDIR
+        trycmd mkdir -p "$DOFILES/vim/vimrt/temp_dirs"
 
     else
         echo "[*] Dein already installed skipping"
@@ -54,7 +55,7 @@ install_dein(){
 }
 
 install_oh_my_zsh(){
-    if [[ ! -e "~/.oh-my-zsh" ]]; then
+    if [[ ! -e ~/.oh-my-zsh ]]; then
         echo "[*] Installing oh-my-zsh"
         trycmd sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     else
@@ -136,7 +137,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 # get the distro installer
-APT=$(which apt-get)
+APT=$(which apt-get 2> /dev/null)
 PAC=$(which pacman)
 
 if [[ ! -z "$APT" ]]; then
@@ -206,18 +207,27 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
 
 fi
 
+#TODO add bash ~/.profile it is sourced by the zprofile
+
 # install the actual config (symlinks)
 if [[ -z "$SKIP_CONFIG" ]];then
 
     #files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
+    MACHINE='vm'
+    if [[ $(hostname) == "gym-arch" ]]; then
+        MACHINE='laptop'
+    elif [[ $(hostname) == "mable" ]]; then
+        MACHINE='pc'
+    fi
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
 	    ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux"\
 	    ["compton"]="compton/compton.conf;.config/compton.conf"\
 	    ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc"\
 	    ["Xorg"]="Xorg/Xresources;.Xresources"\
-	    ["i3"]="i3/xinitrc;.xinitrc i3/.config/i3"\
-	    ["i3blocks"]="i3blocks/i3blocks;.i3blocks i3blocks;.config/i3blocks"\
-	    ["termite"]="termite;.config/termite")
+	    ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local"\
+	    ["i3blocks"]="i3blocks/i3blocks.$MACHINE;.i3blocks i3blocks;.config/i3blocks"\
+	    ["termite"]="termite;.config/termite"\
+        ["dunst"]="dunst;.config/dunst")
 
     # create dotfiles_old in homedir
     echo "[*] Creating $BACKUP for backup of any existing dotfiles"
@@ -234,12 +244,18 @@ if [[ -z "$SKIP_CONFIG" ]];then
         echo "[*] Trying to install config for $app"
         # check if app is installed
         if [[ ! -z `which $app` ]]; then
+            # this is a temporary hack
+            if [[ "$app" == "vim" ]]; then
+                install_dein
+            elif [[ "$app" == "zsh" ]]; then
+                install_oh_my_zsh
+            fi
             for file in ${config[$app]}; do
                 IFS=';' read src dst <<< "$file"
                 
                 # TODO leave it alone if already simlinked
-                echo "[*] Moving ~/$dst to $BACKUP"
-                trycmd "mv -r ~/$dst $BACKUP/"
+                [[ -e ~/$dst ]] && echo "[*] Moving ~/$dst to $BACKUP"
+                [[ -e ~/$dst ]] && trycmd "mv -r ~/$dst $BACKUP/"
                 
                 echo "[*] Creating symlink to $DOTFILES/$src <- ~/$dst"
                 trycmd "ln -s $DOTFILES/$src ~/$dst"

@@ -177,7 +177,25 @@ mode $sysmenu {
     bindsym Return    mode "default"
     bindsym Escape    mode "default"
 }
+# move floating windows with keys
+bindsym $mod+m mode "move" focus floating
+mode "move" {
+    bindsym $mod+Tab focus right
 
+    bindsym Left  move left
+    bindsym Down  move down
+    bindsym Up    move up
+    bindsym Right move right
+
+    bindsym h     move left
+    bindsym j     move down
+    bindsym k     move up
+    bindsym l     move right
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 # workspace assignment
 assign [class="Spotify"] $ws10
@@ -223,8 +241,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-gaps inner 5
-gaps outer 0
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -261,12 +277,6 @@ bindsym $mod+Shift+semicolon move scratchpad
 # bindsym commands
 bindsym $mod+b exec --no-startup-id chromium
 
-# playerctl command
-bindsym $mod+p exec --no-startup-id "playerctl play-pause"
-
-#layouts
-#bindsym $mod+m exec $HOME/.config/i3/layouts/social.sh
-
 for_window [title="^IDA"] floating enable, border normal
 
 # fix razer binds
@@ -274,14 +284,13 @@ for_window [title="^IDA"] floating enable, border normal
 
 # restore background
 exec --no-startup-id "nitrogen --restore"
+# printscreen
+bindsym Print exec --no-startup-id  "scrot ~/random/screenshots/%Y-%m-%d-%T-screenshot.png"
+bindsym Shift+Print exec --no-startup-id  "scrot -s ~/random/screenshots/%Y-%m-%d-%T-screenshot.png"
 
-# start conkies
-#exec --no-startup-id "conky -c $HOME/.conkyrc1"
-#exec --no-startup-id "conky -c $HOME/.conkyrc2"
-#exec --no-startup-id "conky -c $HOME/.conkyrc3"
-
-#exec --no-startup-id "/opt/serviio-1.6.1/bin/serviio.sh"
 exec_always compton --config ~/.config/compton.conf -b
-exec_always --no-startup-id "VBoxClient-all"
 exec_always --no-startup-id "xrdb -load $HOME/.Xresources"
+
+# start notifications
+exec --no-startup-id "dunst -config ~/.config/dunst/dunstrc"
 

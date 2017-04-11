@@ -1,3 +1,4 @@
 vim/vimrt/plugins
 vim/vimrt/temp_dirs
 *.local
+i3/config

@@ -3,6 +3,8 @@ gaps outer 0
 
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false
+# playerctl command
+bindsym $mod+p exec --no-startup-id "playerctl play-pause"
 
 # bindsym backlight
 bindsym XF86MonBrightnessUp exec --no-startup-id "xbacklight -inc 10"

@@ -46,7 +46,7 @@ install_dein(){
     if [[ ! -e $DEINDIR ]]; then
         echo "[*] Installing dein Vim plugin manager"
         trycmd git clone https://github.com/Shougo/dein.vim $DEINDIR
-        trycmd mkdir -p "$DOFILES/vim/vimrt/temp_dirs"
+        trycmd mkdir -p "$DOTFILES/vim/vimrt/temp_dirs"
 
     else
         echo "[*] Dein already installed skipping"
@@ -255,10 +255,10 @@ if [[ -z "$SKIP_CONFIG" ]];then
                 
                 # TODO leave it alone if already simlinked
                 [[ -e ~/$dst ]] && echo "[*] Moving ~/$dst to $BACKUP"
-                [[ -e ~/$dst ]] && trycmd "mv -r ~/$dst $BACKUP/"
+                [[ -e ~/$dst ]] && trycmd "mv $HOME/$dst $BACKUP/"
                 
                 echo "[*] Creating symlink to $DOTFILES/$src <- ~/$dst"
-                trycmd "ln -s $DOTFILES/$src ~/$dst"
+                trycmd "ln -s $DOTFILES/$src $HOME/$dst"
             done
         else
             echo "[*] $app is not installed. Skipping..."

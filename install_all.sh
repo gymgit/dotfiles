@@ -220,12 +220,12 @@ if [[ -z "$SKIP_CONFIG" ]];then
         MACHINE='pc'
     fi
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
-	    ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux"\
+	    ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux tmux/tmux/tmux_init.sh;.bin/tmx"\
 	    ["compton"]="compton/compton.conf;.config/compton.conf"\
 	    ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc"\
 	    ["Xorg"]="Xorg/Xresources;.Xresources"\
-	    ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local"\
-	    ["i3blocks"]="i3blocks/i3blocks.$MACHINE;.i3blocks i3blocks;.config/i3blocks"\
+	    ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
+	    ["i3blocks"]="i3blocks/i3blocks.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
 	    ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")
 

@@ -161,6 +161,7 @@ bindsym $mod+Shift+r restart
 #bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 # execute i3lock
 #bindsym $mod+Shift+x exec i3lock -i ~/Pictures/hexblurred.png -T 0.5 -O 0 -R 200 -F 70 -X 1440 -Y 900 --no-keyboard-layout -c '#000000' -o '#42d242' -w '#ff763e' -l '#eeffff' -e
+bindsym $mod+Shift+x exec lock_screen.sh
 
 #Proper exit
 
@@ -245,7 +246,7 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command /usr/bin/i3blocks
+    status_command i3blocks
 	i3bar_command i3bar -t
 	position top
 	font pango:Hack:style=Bold 10

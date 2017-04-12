@@ -57,7 +57,11 @@ install_dein(){
 install_oh_my_zsh(){
     if [[ ! -e ~/.oh-my-zsh ]]; then
         echo "[*] Installing oh-my-zsh"
-        trycmd sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+        if [[ "$DEBUG" -eq "1" ]]; then
+            echo '[DBG] sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
+        else
+            sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+        fi
     else
         echo "[*] Oh-my-zsh already installed skipping"
     fi

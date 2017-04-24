@@ -188,6 +188,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (TODO)?" ; then
         echo "[*] Installing build tools"
         echo "[#] Skipping TODO"
+
     fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then

@@ -204,6 +204,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
                 exec startx
             fi' | $SUDO tee -a /etc/profile
         fi
+        # install arandr
     fi
     # TODO install yaourt + update conf
     # TODO install userspace (see arch inst)
@@ -239,10 +240,6 @@ if [[ -z "$SKIP_CONFIG" ]];then
 
     # TODO clone the dotfiles directory if needed
 
-    # change to the dotfiles directory
-    # echo "[*] Changing to the $DOTFILES directory"
-    # trycmd "cd $DOTFILES"
-
     # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
     for app in ${!config[@]}; do
         echo "[*] Trying to install config for $app"
@@ -268,4 +265,6 @@ if [[ -z "$SKIP_CONFIG" ]];then
             echo "[*] $app is not installed. Skipping..."
         fi
     done
+
+    # TODO symlink ./bin stuff
 fi

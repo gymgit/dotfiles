@@ -166,7 +166,7 @@ bindsym $mod+Shift+x exec lock_screen.sh
 #Proper exit
 
 # Power menu
-set $sysmenu "  (r)estart - (l)ogout - (s)uspend - re(b)oot - po(w)eroff  "
+set $sysmenu "  (r)estart - (l)ogout - (s)uspend - (h)ibernate - re(b)oot - po(w)eroff  "
 bindsym $mod+Shift+e      mode $sysmenu
 
 mode $sysmenu {
@@ -174,7 +174,8 @@ mode $sysmenu {
     bindsym l         exit
     bindsym w         exec "killall -q -w -s KILL chromium; killall -q -w -s KILL conky; killall -q -w -s KILL spotify; systemctl poweroff"
     bindsym b         exec "killall -q -w -s KILL chromium; killall -q -w -s KILL conky; systemctl reboot"
-    bindsym s         exec "systemctl suspend"
+    bindsym s         exec "lock_screen.sh && sleep 1 && systemctl suspend"
+    bindsym s         exec "lock_screen.sh && sleep 1 && systemctl hibernate"
     bindsym Return    mode "default"
     bindsym Escape    mode "default"
 }

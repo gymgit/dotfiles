@@ -26,3 +26,17 @@ timedatectl set-ntp true
 # $SUDO systemctl start/enable netctl-auto@interface.service
 # wired, dep: ifplugd
 # $SUDO systemctl start/enable netctl-ifplugd@interface.service
+
+#powersettings
+# hibernate on power button
+# do not suspend on lid switch
+TXT='
+HandlePowerKey=hibernate
+HandleLidSwitch=ignore'
+append_conf $TXT "/etc/systemd/login.conf"
+
+# TODO lock on lid close
+# ?? systemd hook
+# set up lock on suspend/hibernate/sleep/monitor off
+# see systemd hooks
+#https://wiki.archlinux.org/index.php/Power_management#Sleep_hooks

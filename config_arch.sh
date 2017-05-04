@@ -34,9 +34,18 @@ TXT='
 HandlePowerKey=hibernate
 HandleLidSwitch=ignore'
 append_conf $TXT "/etc/systemd/login.conf"
+#TODO
+#https://wiki.archlinux.org/index.php/laptop
+# hibernate on critical laptop charge -> udev rule
+# send notifications on 50/25/10%
+
 
 # TODO lock on lid close
 # ?? systemd hook
 # set up lock on suspend/hibernate/sleep/monitor off
 # see systemd hooks
 #https://wiki.archlinux.org/index.php/Power_management#Sleep_hooks
+
+# Auto monitor use
+# set udev rule
+# symlink the toggle_screen.sh

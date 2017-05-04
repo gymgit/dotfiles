@@ -14,7 +14,8 @@ set $editor termite
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:FreeMono 8
+#font pango:FreeMono 8
+font pango:Hack Bold 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -55,6 +56,14 @@ set $cyan #8ae7ff
 set $darkwhite  #d6d6d6
 set $white #dcdccc
 
+set $grey233 #121212
+set $grey234 #1c1c1c
+set $grey236 #303030
+set $grey238 #444444
+set $grey241 #626262
+set $grey245 #8a8a8a
+set $royal63 #5f5fff
+set $slate110 #87afd7
 
 set $transparent	#00000000
 set $barblack   #0000006f
@@ -205,12 +214,13 @@ assign [class="Spotify"] $ws10
 for_window [class="^Spotify$"] move to workspace $ws10
 
 for_window [class="^.*"] border pixel 3
-
+# Disable border if single window is enabled
+hide_edge_borders smart
 #colors
 #			            BORDER		BACKGROUND	     TEXT		INDICATOR	CHILD_BORDER
-client.focused		    $white      	 $black		$white  	$darkblue     	$darkblue
-client.unfocused	    $darkblue	     $black		$darkblue	$black       	$black
-client.focused_inactive $darkblue	     $black		$darkblue	$black        	$black
+client.focused		    $grey241      	 $grey233	$slate110  	$darkblue     	$darkblue
+client.unfocused	    $grey241	     $grey236	$grey245	$black       	$black
+client.focused_inactive $grey241	     $grey236	$grey245	$black        	$black
 client.urgent	        $darkred	     $darkred	$black		$darkred	$darkred
 client.background	    $black
 

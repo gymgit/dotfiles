@@ -1,24 +1,22 @@
-gaps inner 10
+gaps inner 7
 gaps outer 0
 
-workspace $ws1 output DVI-I-0
-workspace $ws2 output HDMI-0
-workspace $ws3 output HDMI-0
-workspace $ws9 output HDMI-0
-workspace $ws10 output DVI-I-0
+workspace $ws1 output DVI-D-0
+workspace $ws2 output VGA-0
+workspace $ws10 output VGA-0
 
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false
 
 #layouts
-bindsym $mod+m exec $HOME/.config/i3/layouts/social.sh
+#bindsym $mod+m exec $HOME/.config/i3/layouts/social.sh
 
 # playerctl command
 bindsym $mod+p exec --no-startup-id "playerctl play-pause"
 
 # start conkies
-exec --no-startup-id "conky -c $HOME/.conkyrc1"
-exec --no-startup-id "conky -c $HOME/.conkyrc2"
-exec --no-startup-id "conky -c $HOME/.conkyrc3"
+#exec --no-startup-id "conky -c $HOME/.conkyrc1"
+#exec --no-startup-id "conky -c $HOME/.conkyrc2"
+#exec --no-startup-id "conky -c $HOME/.conkyrc3"
 
-exec --no-startup-id "/opt/serviio-1.6.1/bin/serviio.sh"
+#exec --no-startup-id "/opt/serviio-1.6.1/bin/serviio.sh"

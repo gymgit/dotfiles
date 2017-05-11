@@ -47,6 +47,11 @@ install_dein(){
         echo "[*] Installing dein Vim plugin manager"
         trycmd git clone https://github.com/Shougo/dein.vim $DEINDIR
         trycmd mkdir -p "$DOTFILES/vim/vimrt/temp_dirs"
+        ## notes TODO fix in deinconf
+        # run git submodule update --init --recursive in youcomplete me
+        # install clang + mono
+        # run pythin install.py --omnisharp-completer --clang-completer
+        # in vim :call dein#update()
 
     else
         echo "[*] Dein already installed skipping"
@@ -193,9 +198,20 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
-        trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-server-utils xorg-xinit xterm xorg-twm xorg-xclock"
+        trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock"
+        trycmd "$SUDO pacman -S --noconfirm ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-hack ttf-symbola"
         # TODO add mesa+gpu drivers
+#	trycmd "$SUDO pacman -S --noconfirm nvidia"
         # TODO add git install for i3 and i3 blocks
+	yaourt -S i3-gaps-git
+	spwd=`pwd`
+        trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
+	git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
+	cd ~/progs/install/i3block
+	make clean all
+	$SUDO make install
+	cd $spwd
+        trycmd "$SUDO pacman -S --noconfirm rofi i3status i3lock compton dunst"
         # update /etc/profile
         echo "[*] updateing /etc/profile"
         # No trycmd here, f*** that escaping hell
@@ -209,9 +225,17 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     fi
     # TODO install yaourt + update conf
     # TODO install userspace (see arch inst)
-    # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
+    # chromium yolo: chromium-widevine pepper-flash spotify
 
+    trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
+    ## should have separate media install
+    trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
+    # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
+    # gdb gcc clang python2-pip pyhton-pip
+
+    # TODO 32 bit packages, lib32-nvidia-utils
 fi
+
 
 #TODO add bash ~/.profile it is sourced by the zprofile
 
@@ -222,7 +246,7 @@ if [[ -z "$SKIP_CONFIG" ]];then
     MACHINE='vm'
     if [[ $(hostname) == "gym-arch" ]]; then
         MACHINE='laptop'
-    elif [[ $(hostname) == "mable" ]]; then
+    elif [[ $(hostname) == "mable" ]] || [[ $(hostname) == "EncsFuzz" ]]; then
         MACHINE='pc'
     fi
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
@@ -231,7 +255,7 @@ if [[ -z "$SKIP_CONFIG" ]];then
 	    ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
 	    ["Xorg"]="Xorg/Xresources;.Xresources"\
 	    ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
-	    ["i3blocks"]="i3blocks/i3blocks.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
+	    ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
 	    ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")
 

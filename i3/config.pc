@@ -8,6 +8,7 @@ workspace $ws10 output VGA-0
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false
 
+exec --no-startup-id xrandr --output VGA-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output DVI-D-0 --mode 1920x1080 --pos 1920x0 --rotate left --output DVI-D-1 --off --output HDMI-0 --off
 #layouts
 #bindsym $mod+m exec $HOME/.config/i3/layouts/social.sh
 
@@ -20,3 +21,7 @@ bindsym $mod+p exec --no-startup-id "playerctl play-pause"
 #exec --no-startup-id "conky -c $HOME/.conkyrc3"
 
 #exec --no-startup-id "/opt/serviio-1.6.1/bin/serviio.sh"
+exec --no-startup-id i3-msg 'workspace 2: @; exec chromium'
+exec --no-startup-id i3-msg 'workspace 3: >_; exec termite -e "tmx default"'
+exec --no-startup-id i3-msg 'workspace 1: ♻; exec termite -e "tmx long"'
+exec --no-startup-id i3-msg 'workspace 3: >_; exec chromium --new-window https://www.facebook.com/ https://twitter.com/ https://mail.google.com/ https://spamandhex.slack.com/'

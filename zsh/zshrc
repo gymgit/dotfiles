@@ -91,7 +91,7 @@ export EDITOR='vim'
 
 # mkvirtualenv fix
 export WORKON_HOME=~/docs/.virtualenvs
-source /usr/bin/virtualenvwrapper.sh
+[[ -e "/usr/bin/virtualenvwrapper.sh" ]] && source /usr/bin/virtualenvwrapper.sh
 
 
 # Aliases

@@ -260,7 +260,8 @@ bar {
     status_command i3blocks
 	i3bar_command i3bar -t
 	position top
-	font pango:Hack:style=Bold 10
+	#font pango:Hack:style=Bold 10
+	font pango:Hack Bold 10
 	strip_workspace_numbers yes
 	separator_symbol "-"
 	workspace_buttons yes

@@ -223,9 +223,12 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         fi
         # install arandr
     fi
+    # PRogs to add:
+    # openssh wireshark dnsutils
     # TODO install yaourt + update conf
     # TODO install userspace (see arch inst)
     # chromium yolo: chromium-widevine pepper-flash spotify
+    #install scrot + imagemagick (foor lock screen)
 
     trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
     ## should have separate media install

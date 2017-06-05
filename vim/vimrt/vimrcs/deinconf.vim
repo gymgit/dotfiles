@@ -30,7 +30,7 @@ if dein#load_state(expand('~/.vimrt/plugins'))
   call dein#add('honza/vim-snippets')
   call dein#add('dkprice/vim-easygrep')
   call dein#add('tmhedberg/SimpylFold')
-  call dein#add('Valloric/YouCompleteMe',{'build' : 'python install.py --clang-completer --omnisharp-completer', 'merged' : 0})
+  call dein#add('Valloric/YouCompleteMe',{'build' : 'python install.py --clang-completer', 'merged' : 0})
   call dein#end()
   call dein#save_state()
 endif

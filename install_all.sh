@@ -189,10 +189,17 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
             trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl"
         fi
     fi
-    # TODO add basic build tools, make, cmake, gcc, python2-3, pip, virtual env
+    # TODO add basic build tools, make, cmake, gcc, clang,g++, python2-3, pip, virtual env, gdb
     if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (TODO)?" ; then
         echo "[*] Installing build tools"
-        echo "[#] Skipping TODO"
+        if [[ ! -z "$APT" ]]; then
+            trycmd "$SUDO apt-get -y make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
+            [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
+        elif [[ ! -z "$PAC" ]]; then
+            trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc g++ gdb-multiarch python python2 python-pip python2-pip virtualenv virtualenvwrapper"
+            [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
+        fi
+            # have to upgrade, partial upgrades suck
 
     fi
 
@@ -201,16 +208,16 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock"
         trycmd "$SUDO pacman -S --noconfirm ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-hack ttf-symbola"
         # TODO add mesa+gpu drivers
-#	trycmd "$SUDO pacman -S --noconfirm nvidia"
+        #    trycmd "$SUDO pacman -S --noconfirm nvidia"
         # TODO add git install for i3 and i3 blocks
-	yaourt -S i3-gaps-git
-	spwd=`pwd`
+        yaourt -S i3-gaps-git
+        spwd=`pwd`
         trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
-	git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
-	cd ~/progs/install/i3block
-	make clean all
-	$SUDO make install
-	cd $spwd
+        git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
+        cd ~/progs/install/i3block
+        make clean all
+        $SUDO make install
+        cd $spwd
         trycmd "$SUDO pacman -S --noconfirm rofi i3status i3lock compton dunst"
         # update /etc/profile
         echo "[*] updateing /etc/profile"
@@ -230,9 +237,9 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     # chromium yolo: chromium-widevine pepper-flash spotify
     #install scrot + imagemagick (foor lock screen)
 
-    trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
+    # trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
     ## should have separate media install
-    trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
+    # trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
     # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
     # gdb gcc clang python2-pip pyhton-pip
 
@@ -240,7 +247,6 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
 fi
 
 
-#TODO add bash ~/.profile it is sourced by the zprofile
 
 # install the actual config (symlinks)
 if [[ -z "$SKIP_CONFIG" ]];then
@@ -253,13 +259,13 @@ if [[ -z "$SKIP_CONFIG" ]];then
         MACHINE='pc'
     fi
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
-	    ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux tmux/tmux/tmux_init.sh;.bin/tmx"\
-	    ["compton"]="compton/compton.conf;.config/compton.conf"\
-	    ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
-	    ["Xorg"]="Xorg/Xresources;.Xresources"\
-	    ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
-	    ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
-	    ["termite"]="termite;.config/termite"\
+        ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux tmux/tmux/tmux_init.sh;.bin/tmx"\
+        ["compton"]="compton/compton.conf;.config/compton.conf"\
+        ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
+        ["Xorg"]="Xorg/Xresources;.Xresources"\
+        ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
+        ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
+        ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")
 
     # create dotfiles_old in homedir

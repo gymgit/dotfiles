@@ -1,0 +1,14 @@
+[Unit]
+Description="Executes Ubuntu debug VM start scripts"
+ConditionFileIsExecutable=/usr/local/sbin/rc.local
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/ubuntu_startup
+TimeoutSec=0
+StandardOutput=tty
+RemainAfterExit=yes
+SysVStartPriority=99
+
+[Install]
+WantedBy=multi-user.target

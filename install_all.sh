@@ -191,7 +191,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
             trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl"
         fi
     fi
-    # TODO add basic build tools, make, cmake, gcc, clang,g++, python2-3, pip, virtual env, gdb
+
     if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (make cmake clang gcc g++ gdb-multiarch python2 python3 python2-pip python3-pip virtualenv virtualenvwrapper)?" ; then
         echo "[*] Installing build tools"
         if [[ ! -z "$APT" ]]; then
@@ -201,9 +201,22 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
             trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc g++ gdb-multiarch python python2 python-pip python2-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         fi
-            # have to upgrade, partial upgrades suck
 
     fi
+
+    # install vbox guest stuff
+    if [[ ! -z "$INSTALL_VBGUEST" ]] || yesno "Install vbox guest tools?" ; then
+        echo "[*] Installing virtualbox guest additions"
+         
+        if [[ ! -z "$APT" ]]; then
+            trycmd "$SUDO apt-get -y install build-essential module-assistant virtualbox-guest-dkms virtualbox-guest-utils"
+        elif [[ ! -z "$PAC" ]]; then
+            # have to upgrade, partial upgrades suck
+            trycmd "$SUDO pacman -S --noconfirm virtualbox-guest-utils"
+        fi
+    fi
+    # TODO install ctf tools
+    # pwntools, pwndbg, afl (on host), preeny, qemu, angr
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
@@ -246,6 +259,8 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     # gdb gcc clang python2-pip pyhton-pip
 
     # TODO 32 bit packages, lib32-nvidia-utils
+
+    
 fi
 
 
@@ -275,6 +290,7 @@ if [[ -z "$SKIP_CONFIG" ]];then
     trycmd "mkdir -p $BACKUP"
 
     # TODO clone the dotfiles directory if needed
+    # TODO install ubuntu VM systemd startup + script (/usr/local/sbin/ubuntu_startup)
 
     # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
     for app in ${!config[@]}; do

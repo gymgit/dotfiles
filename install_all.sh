@@ -51,6 +51,8 @@ install_dein(){
         # run git submodule update --init --recursive in youcomplete me
         # install clang + mono
         # run pythin install.py --omnisharp-completer --clang-completer
+        # on ARCH
+        # run pythin install.py --omnisharp-completer --clang-completer --system-libclang
         # in vim :call dein#update()
 
     else
@@ -190,10 +192,10 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         fi
     fi
     # TODO add basic build tools, make, cmake, gcc, clang,g++, python2-3, pip, virtual env, gdb
-    if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (TODO)?" ; then
+    if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (make cmake clang gcc g++ gdb-multiarch python2 python3 python2-pip python3-pip virtualenv virtualenvwrapper)?" ; then
         echo "[*] Installing build tools"
         if [[ ! -z "$APT" ]]; then
-            trycmd "$SUDO apt-get -y make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
+            trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         elif [[ ! -z "$PAC" ]]; then
             trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc g++ gdb-multiarch python python2 python-pip python2-pip virtualenv virtualenvwrapper"

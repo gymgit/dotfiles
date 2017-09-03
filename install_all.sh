@@ -181,14 +181,14 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         trycmd "$SUDO pacman -Syu"
     fi
     
-    if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux, curl)?" ; then
+    if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux, curl, wget)?" ; then
         echo "[*] Installing essentials"
          
         if [[ ! -z "$APT" ]]; then
-            trycmd "$SUDO apt-get -y install git vim zsh tmux curl"
+            trycmd "$SUDO apt-get -y install git vim zsh tmux curl wget"
         elif [[ ! -z "$PAC" ]]; then
             # have to upgrade, partial upgrades suck
-            trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl"
+            trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl wget"
         fi
     fi
 
@@ -198,7 +198,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
             trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc g++ gdb-multiarch python python2 python-pip python2-pip virtualenv virtualenvwrapper"
+            trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         fi
 
@@ -225,6 +225,8 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         # TODO add mesa+gpu drivers
         #    trycmd "$SUDO pacman -S --noconfirm nvidia"
         # TODO add git install for i3 and i3 blocks
+
+        # trycmd + install yaourt first
         yaourt -S i3-gaps-git
         spwd=`pwd`
         trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
@@ -239,18 +241,33 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         # No trycmd here, f*** that escaping hell
         if [[ "$DEBUG" -ne 1 ]]; then
             echo '# autostart systemd default session on tty1
-            if [[ \"$(tty)\" == \"/dev/tty1\" ]]; then
+            if [[ "$(tty)" == "/dev/tty1" ]]; then
                 exec startx
             fi' | $SUDO tee -a /etc/profile
         fi
         # install arandr
     fi
     # PRogs to add:
-    # openssh wireshark dnsutils
-    # TODO install yaourt + update conf
+    # Install graphics:
+    # pacman -S mesa nvidia bumblebee xf86-video-intel lib32-virtualgl lib32-nvidia-utils mesa-demos primus lib32-primus
+    # gpasswd -a gym bumblebee
+    # systemctl enable bumblebee
+
+    #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
+
+    # openssh wireshark-gtk dnsutils gnu-netcat nmap
+
+    # virtualbox virtualbox-host-modules-arch
+
+    # keepassx2 tresorit
+
+    # unzip rsync
+
+    # TODO install yaourt + update conf /etc/pacman.con (install multi lib aswell)
     # TODO install userspace (see arch inst)
     # chromium yolo: chromium-widevine pepper-flash spotify
     #install scrot + imagemagick (foor lock screen)
+
 
     # trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
     ## should have separate media install
@@ -259,6 +276,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     # gdb gcc clang python2-pip pyhton-pip
 
     # TODO 32 bit packages, lib32-nvidia-utils
+    #INSTALL office tools libreoffice dia latex
 
     
 fi
@@ -270,11 +288,12 @@ if [[ -z "$SKIP_CONFIG" ]];then
 
     #files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
     MACHINE='vm'
-    if [[ $(hostname) == "gym-arch" ]]; then
+    if [[ $(hostname) == "LaptopArch" ]]; then
         MACHINE='laptop'
-    elif [[ $(hostname) == "mable" ]] || [[ $(hostname) == "EncsFuzz" ]]; then
+    elif [[ $(hostname) == "MableArch" ]] || [[ $(hostname) == "EncsFuzz" ]]; then
         MACHINE='pc'
     fi
+    
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\
         ["tmux"]="tmux/tmux.conf;.tmux.conf tmux/tmux;.tmux tmux/tmux/tmux_init.sh;.bin/tmx"\
         ["compton"]="compton/compton.conf;.config/compton.conf"\
@@ -289,6 +308,8 @@ if [[ -z "$SKIP_CONFIG" ]];then
     echo "[*] Creating $BACKUP for backup of any existing dotfiles"
     trycmd "mkdir -p $BACKUP"
 
+    echo "[*] Creating ~/.config for directory" 
+    trycmd "mkdir -p $HOME/.config"
     # TODO clone the dotfiles directory if needed
     # TODO install ubuntu VM systemd startup + script (/usr/local/sbin/ubuntu_startup)
 

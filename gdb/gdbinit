@@ -1,1 +1,4 @@
-source /home/gym/progs/install/pwndbg/gdbinit.py
+source /home/gym/progs/src/pwndbg/gdbinit.py
+#set ida-rpc-host "192.168.101.15"
+set follow-fork-mode child
+#set sysroot /home/gym/ctf/vagrant/xenial64/sysroot

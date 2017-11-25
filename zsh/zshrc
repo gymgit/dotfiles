@@ -105,5 +105,7 @@ alias packman="pacman"
 #alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # bindings
 bindkey -e
-bindkey "^P" up-line-or-search
-bindkey "^N" down-line-or-search
+# bindkey "^P" up-line-or-search
+# bindkey "^N" down-line-or-search
+bindkey "^P" history-beginning-search-backward
+bindkey "^N" history-beginning-search-forward

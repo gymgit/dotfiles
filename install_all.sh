@@ -25,6 +25,16 @@ yesno() {
     done
 }
 
+testvm() {
+    local stat=$(hostnamectl status | grep -i chassis)
+    local chass=${stat##* }
+    if [[ "$chass" == "vm" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 trycmd() {
     if [[ "$DEBUG" -eq "1" ]]; then
         echo "[DBG] $@"
@@ -67,6 +77,7 @@ install_oh_my_zsh(){
         if [[ "$DEBUG" -eq "1" ]]; then
             echo '[DBG] sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
         else
+            # because executing scripts from the internet is ever fun
             sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
         fi
     else
@@ -87,90 +98,84 @@ dohelp() {
     echo -e "-ix,--install-x:\n\tinstall x server"
 }
 
-# TODO parse command line for options
-DOTFILES=~/.dotfiles
-BACKUP=~/.backup_dot
-DEBUG=0
+parse_arg() {
+    DOTFILES=~/.dotfiles
+    BACKUP=~/.backup_dot
+    DEBUG=0
 
-while [[ $# -gt 0 ]]; do
-    key=$1
-    case $key in
-        -d|--debug)
-            DEBUG=1
-            ;;
-        -df|--dot-files)
-            DOTFILES=$2
-            if [[ ! -d "$DOTFILES" ]]; then
-               echo "[#] directory $DOTFILES does not exist"
-               exit 3
-            fi
-            shift
-            ;;
-        -b|--backup)
-            BACKUP=$2
-            shift
-            ;;
-        -co|--config-only)
-            CONFIG_ONLY=1
-            #SKIP_QUESTION=1
-            ;;
-        -s|--skip-config)
-            SKIP_CONFIG=1
-            ;;
-        -ib|--install-base)
-            INSTALL_BASE=1
-            SKIP_QUESTION=1
-            ;;
-        -id|--install-build)
-            INSTALL_BUILD=1
-            SKIP_QUESTION=1
-            ;;
-        -ix|--install-x)
-            INSTALL_X=1
-            SKIP_QUESTION=1
-            ;;
-        -a|-all)
-            INSTALL_BASE=1
-            INSTALL_X=1
-            INSTALL_BUILD=1
-            SKIP_QUESTION=1
-            ;;
-        -h|--help)
-            dohelp
-            exit 3
-            ;;
-        *)
-            echo "[#] Unknown paramter: $key"
-            dohelp
-            exit 3
-            ;;
-    esac
-    shift
-done
-# get the distro installer
-APT=$(which apt-get 2> /dev/null)
-PAC=$(which pacman)
+    while [[ $# -gt 0 ]]; do
+        key=$1
+        case $key in
+            -d|--debug)
+                DEBUG=1
+                ;;
+            -df|--dot-files)
+                DOTFILES=$2
+                if [[ ! -d "$DOTFILES" ]]; then
+                   echo "[#] directory $DOTFILES does not exist"
+                   exit 3
+                fi
+                shift
+                ;;
+            -b|--backup)
+                BACKUP=$2
+                shift
+                ;;
+            -co|--config-only)
+                CONFIG_ONLY=1
+                #SKIP_QUESTION=1
+                ;;
+            -s|--skip-config)
+                SKIP_CONFIG=1
+                ;;
+            -ib|--install-base)
+                INSTALL_BASE=1
+                SKIP_QUESTION=1
+                ;;
+            -id|--install-build)
+                INSTALL_BUILD=1
+                SKIP_QUESTION=1
+                ;;
+            -ix|--install-x)
+                INSTALL_X=1
+                SKIP_QUESTION=1
+                ;;
+            -a|-all)
+                INSTALL_BASE=1
+                INSTALL_X=1
+                INSTALL_BUILD=1
+                SKIP_QUESTION=1
+                ;;
+            -h|--help)
+                dohelp
+                exit 3
+                ;;
+            *)
+                echo "[#] Unknown paramter: $key"
+                dohelp
+                exit 3
+                ;;
+        esac
+        shift
+    done
+}
 
-if [[ ! -z "$APT" ]]; then
-    echo "[*] Installing on Debian/Ubuntu based VM"
-elif [[ ! -z "$PAC" ]]; then
-    echo "[*] Installing on Arch"
-else
-    echo "[#] Error unsupported distro"
-    exit 1
-fi
+get_dist() {
+    # get the distro installer
+    APT=$(which apt-get 2> /dev/null)
+    PAC=$(which pacman)
 
-if [[ $EUID -eq 0 ]]; then
-    echo "[*] Running as root..."
-    SUDO=""
-else
-    SUDO="sudo"
-fi
+    if [[ ! -z "$APT" ]]; then
+        echo "[*] Installing on Debian/Ubuntu based VM"
+    elif [[ ! -z "$PAC" ]]; then
+        echo "[*] Installing on Arch"
+    else
+        echo "[#] Error unsupported distro"
+        exit 1
+    fi
+}
 
-
-
-# installing dist packages
-if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" || [[ ! -z "$SKIP_QUESTION" ]] ) ; then
+install_packages() {
     echo "[*] Installing dist packages"
     echo "[*] Updating package repos"
 
@@ -187,7 +192,6 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         if [[ ! -z "$APT" ]]; then
             trycmd "$SUDO apt-get -y install git vim zsh tmux curl wget"
         elif [[ ! -z "$PAC" ]]; then
-            # have to upgrade, partial upgrades suck
             trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl wget"
         fi
     fi
@@ -205,18 +209,18 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     fi
 
     # install vbox guest stuff
-    if [[ ! -z "$INSTALL_VBGUEST" ]] || yesno "Install vbox guest tools?" ; then
+    if testvm && ( [[ ! -z "$INSTALL_VBGUEST" ]] || yesno "Install vbox guest tools?" ); then
         echo "[*] Installing virtualbox guest additions"
          
         if [[ ! -z "$APT" ]]; then
             trycmd "$SUDO apt-get -y install build-essential module-assistant virtualbox-guest-dkms virtualbox-guest-utils"
         elif [[ ! -z "$PAC" ]]; then
-            # have to upgrade, partial upgrades suck
             trycmd "$SUDO pacman -S --noconfirm virtualbox-guest-utils"
         fi
     fi
     # TODO install ctf tools
     # pwntools, pwndbg, afl (on host), preeny, qemu, angr
+    # TODO install + config yaourt
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
@@ -230,6 +234,7 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
         yaourt -S i3-gaps-git
         spwd=`pwd`
         trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
+
         git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
         cd ~/progs/install/i3block
         make clean all
@@ -263,6 +268,8 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
 
     # unzip rsync
 
+    #deluge
+
     # TODO install yaourt + update conf /etc/pacman.con (install multi lib aswell)
     # TODO install userspace (see arch inst)
     # chromium yolo: chromium-widevine pepper-flash spotify
@@ -272,20 +279,18 @@ if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" ||
     # trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
     ## should have separate media install
     # trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
+    # yolo -S pulseaudio-ctl (for controlling volume)
     # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
     # gdb gcc clang python2-pip pyhton-pip
 
     # TODO 32 bit packages, lib32-nvidia-utils
     #INSTALL office tools libreoffice dia latex
-
+}
     
-fi
 
 
 
-# install the actual config (symlinks)
-if [[ -z "$SKIP_CONFIG" ]];then
-
+install_config() {
     #files="bashrc vimrc vim zshrc oh-my-zsh"    # list of files/folders to symlink in homedir
     MACHINE='vm'
     if [[ $(hostname) == "LaptopArch" ]]; then
@@ -340,4 +345,30 @@ if [[ -z "$SKIP_CONFIG" ]];then
     done
 
     # TODO symlink ./bin stuff
+}
+
+main() {
+    parse_arg "${@}"
+    get_dist
+
+    if [[ $EUID -eq 0 ]]; then
+        echo "[*] Running as root..."
+        SUDO=""
+    else
+        SUDO="sudo"
+    fi
+
+    # installing dist packages
+    if [[ -z "$CONFIG_ONLY" ]] && ( yesno "Do you want to install dist packages?" || [[ ! -z "$SKIP_QUESTION" ]] ) ; then
+        install_packages
+    fi
+
+    # install the actual config (symlinks)
+    if [[ -z "$SKIP_CONFIG" ]] && ( yesno "Do you want to install config links?" || [[ ! -z "$SKIP_QUESTION" ]] ) ; then
+        install_config
+    fi
+}
+
+if [ "${1}" != "--source-only" ]; then
+    main "${@}"
 fi

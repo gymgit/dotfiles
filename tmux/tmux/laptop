@@ -2,8 +2,8 @@
 
 #new -s default
 neww -n devel /bin/zsh
-#splitw -v -p 20 -t 0 /bin/zsh
-splitw -h -p 20 -t 0 /bin/zsh
+splitw -v -p 20 -t 0 /bin/zsh
+#splitw -h -p 20 -t 0 /bin/zsh
 neww -n general /bin/zsh
 selectw -t 0
 selectp -t 0

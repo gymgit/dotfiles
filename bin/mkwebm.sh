@@ -33,7 +33,7 @@ do
 
     # cut the piece from the vid and convert to webm
     echo "[#] From $t1 for $elaps"
-    ffmpeg -y -threads 3 -i $1 -ss $t1 -t $elaps -crf 5 -b:v 3M -vcodec libvpx -acodec libvorbis "$2_part$i.webm"
+    ffmpeg -y -threads 3 -i $1 -ss $t1 -t $elaps -crf 5 -b:v 4M -vcodec libvpx -qmin 0 -qmax 30 -acodec libvorbis "$2_part$i.webm"
     # add the part to the list
     echo "file '$2_part$i.webm'" >> parts_list.txt
     i=$((i + 1))

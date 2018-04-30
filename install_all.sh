@@ -290,6 +290,7 @@ install_packages() {
 
     # TODO 32 bit packages, lib32-nvidia-utils
     #INSTALL office tools libreoffice dia latex
+    # sudo pacman -S texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra
 }
     
 

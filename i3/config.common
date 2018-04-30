@@ -15,7 +15,6 @@ set $editor termite
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 #font pango:FreeMono 8
-font pango:Hack Bold 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -156,11 +155,6 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
 
-#workspace $ws1 output DVI-I-0
-#workspace $ws2 output HDMI-0
-#workspace $ws3 output HDMI-0
-#workspace $ws9 output HDMI-0
-#workspace $ws10 output DVI-I-0
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -213,7 +207,6 @@ assign [class="Spotify"] $ws10
 
 for_window [class="^Spotify$"] move to workspace $ws10
 
-for_window [class="^.*"] border pixel 3
 # Disable border if single window is enabled
 hide_edge_borders smart
 #colors
@@ -253,44 +246,14 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-    status_command i3blocks
-	i3bar_command i3bar -t
-	position top
-	#font pango:Hack:style=Bold 10
-	font pango:Hack Bold 10
-	strip_workspace_numbers yes
-	separator_symbol "-"
-	workspace_buttons yes
-	bindsym button4 nop
-	bindsym button5 nop
-	tray_output none
-	tray_padding 0
-	height 25
-	colors {
-		statusline 		$white
-		background		$barblack
-		separator		$barblack
-#                           BORDER		    BACKGROUND      TEXT
-		focused_workspace	$barblack   	$barblack   	$blue
-		inactive_workspace	$barblack   	$barblack   	$white
-		active_workspace	$barblack   	$barblack   	$white
-		urgent_workspace	$darkred	    $darkred        $transparent
-		binding_mode		$darkred	    $darkred        $transparent
-	}
-}
-
 # bindsym scratchpad
 bindsym $mod+semicolon scratchpad show
 bindsym $mod+Shift+semicolon move scratchpad
 
 # bindsym commands
-bindsym $mod+b exec --no-startup-id chromium
+bindsym $mod+b exec --no-startup-id firefox
 
-for_window [title="^IDA"] floating enable, border normal
+#for_window [title="^IDA"] floating enable, border normal
 
 # fix razer binds
 #exec --no-startup-id "razer_binds.sh"
@@ -298,8 +261,8 @@ for_window [title="^IDA"] floating enable, border normal
 # restore background
 exec --no-startup-id "nitrogen --restore"
 # printscreen
-bindsym Print exec --no-startup-id  "scrot ~/random/screenshots/%Y-%m-%d-%T-screenshot.png"
-bindsym Shift+Print exec --no-startup-id  "scrot -s ~/random/screenshots/%Y-%m-%d-%T-screenshot.png"
+bindsym Print exec --no-startup-id  "scrot ~/rand/screenshots/%Y-%m-%d-%T-screenshot.png"
+bindsym Shift+Print exec --no-startup-id  "scrot -s ~/rand/screenshots/%Y-%m-%d-%T-screenshot.png"
 
 exec_always compton --config ~/.config/compton.conf -b
 exec_always --no-startup-id "xrdb -load $HOME/.Xresources"

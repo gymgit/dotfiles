@@ -7,4 +7,8 @@
 [ -f ~/.config/i3/config.common ] && cat ~/.config/i3/config.common > ~/.config/i3/config
 [ -f ~/.config/i3/config.local ] && cat ~/.config/i3/config.local >> ~/.config/i3/config
 
+#exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-$S') 2>&1
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+export SSH_AUTH_SOCK
 exec i3
+#/usr/bin/X11/xterm &

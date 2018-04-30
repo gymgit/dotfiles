@@ -221,6 +221,7 @@ install_packages() {
     # TODO install ctf tools
     # pwntools, pwndbg, afl (on host), preeny, qemu, angr
     # TODO install + config yaourt
+    # install tizen instead (See the scripts snippet)
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
@@ -229,18 +230,19 @@ install_packages() {
         # TODO add mesa+gpu drivers
         #    trycmd "$SUDO pacman -S --noconfirm nvidia"
         # TODO add git install for i3 and i3 blocks
+	# T
 
         # trycmd + install yaourt first
-        yaourt -S i3-gaps-git
-        spwd=`pwd`
-        trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
+       # yaourt -S i3-gaps-git
+        #spwd=`pwd`
+        #trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
 
-        git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
-        cd ~/progs/install/i3block
-        make clean all
-        $SUDO make install
-        cd $spwd
-        trycmd "$SUDO pacman -S --noconfirm rofi i3status i3lock compton dunst"
+        #git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
+        #cd ~/progs/install/i3block
+        #make clean all
+        #$SUDO make install
+        #cd $spwd
+        trycmd "$SUDO pacman -S --noconfirm i3-gaps rofi i3status i3lock compton dunst"
         # update /etc/profile
         echo "[*] updateing /etc/profile"
         # No trycmd here, f*** that escaping hell
@@ -254,7 +256,7 @@ install_packages() {
     fi
     # PRogs to add:
     # Install graphics:
-    # pacman -S mesa nvidia bumblebee xf86-video-intel lib32-virtualgl lib32-nvidia-utils mesa-demos primus lib32-primus
+    # pacman -S mesa nvidia bumblebee xf86-video-intel lib32-virtualgl lib32-nvidia-utils mesa-demos primus lib32-primus bbswitch
     # gpasswd -a gym bumblebee
     # systemctl enable bumblebee
 
@@ -265,10 +267,13 @@ install_packages() {
     # virtualbox virtualbox-host-modules-arch
 
     # keepassx2 tresorit
+    # arandr xsel 
 
     # unzip rsync
 
     #deluge
+
+    # firefox
 
     # TODO install yaourt + update conf /etc/pacman.con (install multi lib aswell)
     # TODO install userspace (see arch inst)
@@ -297,6 +302,8 @@ install_config() {
         MACHINE='laptop'
     elif [[ $(hostname) == "MableArch" ]] || [[ $(hostname) == "EncsFuzz" ]]; then
         MACHINE='pc'
+    elif [[ $(hostname) == "worklt" ]]; then
+        MACHINE='worklt'
     fi
     
     declare -A config=( ["vim"]="vim/vimrc;.vimrc vim/vimrt;.vimrt"\

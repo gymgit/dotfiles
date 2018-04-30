@@ -1,0 +1,108 @@
+#partitoning
+#parted /dev/sda
+#mklabel gpt
+#mkpart ESP fat32 1MiB 513MiB
+#set 1 boot on
+
+cgdisk /dev/sda
+1 100MB EFI partition # Hex code ef00
+2 300MB Boot partition # Hex code 8300
+3 100% size partiton # (to be encrypted) Hex code 8300 //no encryption
+
+mkfs.vfat -F32 /dev/sda1
+mkfs.ext2 /dev/sda2
+mkfs.ext4 /dev/sda3
+
+cgdisk /dev/sdb
+3 100% size partiton # (to be encrypted) Hex code 8300
+
+# cryptsetup
+cryptsetup -c aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 5000 -y --use-random luksFormat /dev/sdb1
+cryptsetup open --type luks /dev/sdb1 lvm
+
+# lvm
+pvcreate /dev/mapper/lvm
+vgcreate vg0 /dev/mapper/lvm
+
+lvcreate -L 16G vg0 -n swap
+lvcreate -L 16G vg0 -n var
+lvcreate -l 100%FREE vg0 -n home
+
+#format 
+mkfs.ext4 /dev/mapper/vg0-home
+mkfs.ext4 /dev/mapper/vg0-var
+mkswap /dev/mapper/vg0-swap
+
+#mounting
+mount /dev/sda3 /mnt
+mkdir /mnt/boot
+mount /dev/sda2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
+mkdir /mnt/home
+mount /dev/mapper/vg0-home /mnt/home
+mkdir /mnt/var 
+mount /dev/mapper/vg0-var /mnt/var
+
+swapon /dev/mapper/vg0-swap
+
+#install base system
+pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog
+
+# 'install' fstab
+genfstab -pU /mnt >> /mnt/etc/fstab
+# Make /tmp a ramdisk (add the following line to /mnt/etc/fstab)
+tmpfs	/tmp	tmpfs	defaults,noatime,mode=1777	0	0
+# Change relatime on all non-boot partitions to noatime (reduces wear if using an SSD)
+
+# Enter the new system
+arch-chroot /mnt /bin/bash
+
+# add /etc/mkinitcpio.conf
+HOOKS="... encrypt lvm2 ... filesystems ..."
+MODULES += ext4
+mkinitcpio -p linux
+
+
+## these parts should be automated
+# Setup system clock
+ln -s /usr/share/zoneinfo/Europe/Budapest /etc/localtime
+hwclock --systohc --utc
+
+# local
+sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+echo LANG=en_US.UTF-8 >> /etc/locale.conf
+echo LANGUAGE=en_US >> /etc/locale.conf
+echo LC_ALL=C >> /etc/locale.conf
+export LANG=en_US.UTF-8
+
+#hostname 
+echo MableArch > /etc/hostname
+
+# setup users /root
+passwd
+useradd -m -g users -G wheel,games,power,optical,storage,scanner,lp,audio,video -s /bin/zsh gym
+passwd gym
+
+# setup wheel sudo
+visudo
+
+# install setup grub
+grub-install
+# In /etc/default/grub edit the line GRUB_CMDLINE_LINUX to GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdb1:luks:allow-discards" then run:
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# for nonefi
+grub-install --recheck /dev/sda
+
+#finish
+exit
+
+umount -R /mnt
+swapoff -a
+cryptsetup close lvm
+
+
+# Reboot into the new system, don't forget to remove the cd/usb
+reboot

@@ -8,6 +8,8 @@ rankmirrors -n 7 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 [archlinuxfr]
 SigLevel = never
 Server = http://repo.archlinux.fr/$arch
-pacman -S yaourt
-
+#pacman -S yaourt
+git clone https://aur.archlinux.org/trizen.git
+cd trizen
+makepkg -si
 ### uncomment multilib atc pacman.conf

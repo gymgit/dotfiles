@@ -1,5 +1,4 @@
-font pango:Hack Bold 8
-
+font pango:Hack Bold 6
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -7,7 +6,7 @@ bar {
 	i3bar_command i3bar -t
 	position top
 	#font pango:Hack:style=Bold 10
-	font pango:Hack Bold 10
+	font pango:Hack Bold 7
 	strip_workspace_numbers yes
 	separator_symbol "-"
 	workspace_buttons yes
@@ -15,7 +14,7 @@ bar {
 	bindsym button5 nop
 	tray_output none
 	tray_padding 0
-	height 25
+	height 22
 	colors {
 		statusline 		$white
 		background		$barblack
@@ -28,24 +27,39 @@ bar {
 		binding_mode		$darkred	    $darkred        $transparent
 	}
 }
+gaps outer 5
+gaps inner 5
 
-gaps outer 0
-gaps inner 0
-
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 2
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false
 # playerctl command
 bindsym $mod+p exec --no-startup-id "playerctl play-pause"
-
-# bindsym backlight
+#
+# # bindsym backlight
 bindsym XF86MonBrightnessUp exec --no-startup-id "xbacklight -inc 10"
 bindsym XF86MonBrightnessDown exec --no-startup-id "xbacklight -dec 10"
-
-# bindsym volume ctrl
+#
+# # bindsym volume ctrl
 bindsym XF86AudioMute exec --no-startup-id "pulseaudio-ctl mute"
 bindsym XF86AudioMicMute exec --no-startup-id "pulseaudio-ctl mute-input"
 bindsym XF86AudioRaiseVolume exec --no-startup-id "pulseaudio-ctl up 5"
 bindsym XF86AudioLowerVolume exec --no-startup-id "pulseaudio-ctl down 5"
 bindsym XF86Explorer exec --no-startup-id "toggle_screen.sh"
+#
+workspace $ws1 output DP-4
+workspace $ws2 output DP-3.1
+workspace $ws3 output DP-3.1
+workspace $ws4 output DP-3.2
+workspace $ws5 output DP-3.2
+workspace $ws9 output DP-3.2
+workspace $ws10 output DP-3.2
 
+exec --no-startup-id i3-msg 'workspace 9: ☺; exec skypeforlinux; exec firefox --new-window --url www.gmail.com --url spamandhex.slack.com --url http://10.169.146.250:3000; exec thunderbird'
+exec --no-startup-id i3-msg 'workspace 2: @; exec firefox; exec termite'
+exec --no-startup-id i3-msg 'workspace 3: >_; exec termite'
+
+#workspace $ws2 output HDMI-0
+#workspace $ws3 output HDMI-0
+#workspace $ws9 output HDMI-0
+#workspace $ws10 output DVI-I-0

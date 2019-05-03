@@ -8,7 +8,9 @@
 [ -f ~/.config/i3/config.local ] && cat ~/.config/i3/config.local >> ~/.config/i3/config
 
 #exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-$S') 2>&1
+dbus-update-activation-environment --systemd DISPLAY
 eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+#eval $(/usr/bin/gnome-keyring-daemon --start --components=secrets)
 export SSH_AUTH_SOCK
 exec i3
 #/usr/bin/X11/xterm &

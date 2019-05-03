@@ -2,7 +2,9 @@
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
-set history=500
+set history=1000
+
+set undolevels=1000
 
 " Enable filetype plugins
 filetype plugin on
@@ -31,6 +33,7 @@ nnoremap ; :
 
 " Disable the god damned history window
 map q: :q
+map q; :q
 
 " Setting up folding
 " za toggles fold
@@ -41,9 +44,15 @@ autocmd Syntax c,cpp,vim,xml,html,xhtml,perl,python normal zR
 nnoremap <leader>a za
 
 "set grepprg = "grep"
-if executable('ag')
+" Search and Replace
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading\ --hidden
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+elseif executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor\ --vimgrep
     set grepformat^=%f:%l:%c:%m
+else
+    set grepprg = "grep"
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -120,6 +129,8 @@ endif
 " Add a bit extra margin to the left
 set foldcolumn=1
 
+" Hide empty line marks
+highlight EndOfBuffer ctermfg=black
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GUI related
@@ -137,7 +148,7 @@ elseif has("unix")
     set gfn=Monospace\ 11
 endif
 
-" Disable scrollbars (real hackers don't use scrollbars for navigation!)
+" Disable scrollbars
 set guioptions-=r
 set guioptions-=R
 set guioptions-=l
@@ -161,6 +172,10 @@ syntax enable
 " Enable 256 colors palette in Gnome Terminal
 if $COLORTERM == 'gnome-terminal'
     set t_Co=256
+endif
+
+if exists('$TMUX') 
+    set term=screen-256color 
 endif
 
 set background=dark
@@ -247,11 +262,31 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+"split windows
+nnoremap <leader>sv :vsplit<CR>
+nnoremap <leader>sh :split<CR>
+
+" resize horzontal split window
+nnoremap <C-Up> <C-W>-
+nnoremap <C-Down> <C-W>+
+" resize vertical split window
+nnoremap <C-Right> <C-W>>
+nnoremap <C-Left> <C-W><
+" TODO check why these don't work
+
 " Close the current buffer
-map <leader>bd :Bclose<cr>:tabclose<cr>gT
+" map <leader>bd :exe "bp|bd #"<cr>
+map <leader>bd :Bclose<cr>
 
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
+
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
+
+let g:lastbuf = 1
+map <silent> <C-i> :exe "buf ".g:lastbuf<CR>
+au BufLeave * let g:lastbuf = bufnr("%")
 
 "map <leader>l :bnext<cr>
 "map <leader>h :bprevious<cr>
@@ -261,12 +296,22 @@ map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
-map <leader>tt :tabnext 
+"map <leader>tt :tabnext<cr>
+map <leader>1 1gt
+map <leader>2 2gt
+map <leader>3 3gt
+map <leader>4 4gt
+map <leader>5 5gt
+map <leader>6 6gt
+map <leader>7 7gt
+map <leader>8 8gt
+map <leader>9 9gt
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
 au TabLeave * let g:lasttab = tabpagenr()
+
 
 
 " Opens a new tab with the current buffer's path
@@ -276,10 +321,11 @@ map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
-" Specify the behavior when switching between buffers 
+" Specify the behavior when switching between buffers
+set stal=2
 try
   set switchbuf=useopen,usetab,newtab
-  set stal=2
+"  set stal=2
 catch
 endtry
 
@@ -300,15 +346,18 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"quit all
+nnoremap <leader>qq :qa
+
 " Remap VIM 0 to first non-blank character
 noremap 0 ^
 noremap ^ 0
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+"nmap <M-j> mz:m+<cr>`z
+"nmap <M-k> mz:m-2<cr>`z
+"vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+"vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 if has("mac") || has("macunix")
   nmap <D-j> <M-j>
@@ -342,15 +391,7 @@ nnoremap <silent> p p`]
 " select pasted
 noremap gV `[v`]
 
-map <leader>1 1gt
-map <leader>2 2gt
-map <leader>3 3gt
-map <leader>4 4gt
-map <leader>5 5gt
-map <leader>6 6gt
-map <leader>7 7gt
-map <leader>8 8gt
-map <leader>9 9gt
+
 
 
 
@@ -384,7 +425,7 @@ map <leader>pp :setlocal paste!<cr>
 
 " Fast Edit vimrc
 map <leader>e :e! ~/.vimrt/vimrcs/scratch.vim<cr>
-autocmd! bufwritepost vimrc source ~/.vim_runtime/scratch.vim
+autocmd! bufwritepost vimrc source ~/.vimrt/vimrcs/scratch.vim
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Turn persistent undo on 
@@ -428,12 +469,12 @@ vnoremap $q <esc>`>a'<esc>`<i'<esc>
 vnoremap $e <esc>`>a"<esc>`<i"<esc>
 
 " Map auto complete of (, ", ', [
-inoremap $1 ()<esc>i
-inoremap $2 []<esc>i
-inoremap $3 {}<esc>i
-inoremap $4 {<esc>o}<esc>O
-inoremap $q ''<esc>i
-inoremap $e ""<esc>i
+"inoremap $1 ()<esc>i
+"inoremap $2 []<esc>i
+"inoremap $3 {}<esc>i
+"inoremap $4 {<esc>o}<esc>O
+"inoremap $q ''<esc>i
+"inoremap $e ""<esc>i
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -445,7 +486,7 @@ iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Omni complete functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

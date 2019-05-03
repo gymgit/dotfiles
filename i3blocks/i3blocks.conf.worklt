@@ -44,7 +44,7 @@ command=$HOME/.config/i3blocks/scripts/mplayer.sh
 interval=5
 signal=10
 separator=true
-min_width=450
+min_width=600
 #border=#ebdbb2
 #background=#00e461
 

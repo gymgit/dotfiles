@@ -5,8 +5,9 @@ case $BLOCK_BUTTON in
   3) playerctl previous;;  # right click, mute/unmute
 esac
 
-echo -n "["
-playerctl metadata artist
-echo -n " - "
-playerctl metadata title
-echo "]"
+playerctl --player=spotify metadata -f "[{{ artist }} - {{ title }}]"
+# echo -n "["
+# playerctl metadata artist
+# echo -n " - "
+# playerctl metadata title
+# echo "]"

@@ -5,8 +5,8 @@
 #set 1 boot on
 
 cgdisk /dev/sda
-1 100MB EFI partition # Hex code ef00
-2 300MB Boot partition # Hex code 8300
+1 250MB EFI partition # Hex code ef00
+2 500MB Boot partition # Hex code 8300
 3 100% size partiton # (to be encrypted) Hex code 8300 //no encryption
 
 mkfs.vfat -F32 /dev/sda1
@@ -24,7 +24,7 @@ cryptsetup open --type luks /dev/sdb1 lvm
 pvcreate /dev/mapper/lvm
 vgcreate vg0 /dev/mapper/lvm
 
-lvcreate -L 16G vg0 -n swap
+lvcreate -L 32G vg0 -n swap
 lvcreate -L 16G vg0 -n var
 lvcreate -l 100%FREE vg0 -n home
 

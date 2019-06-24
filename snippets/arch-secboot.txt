@@ -1,0 +1,48 @@
+# install trizen
+cd /home/user
+su user
+git clone https://aur.archlinux.org/trizen.git
+cd trizen
+makepkg -si
+## install shim
+trizen -S shim-signed
+exit
+
+## install refind
+# skip grub install!!
+pacman -S refind-efi parted python imagemagick sbsigntools
+
+## install refind
+refind-install --shim /usr/share/shim-signed/shimx64.efi --localkeys
+# sign the kernel
+sbsign --key /etc/refind.d/keys/refind_local.key --cert /etc/refind.d/keys/refind_local.crt --output /boot/vmlinuz-linux /boot/vmlinuz-linux
+# sign ramfs?
+
+# set pacman hook:
+# /etc/pacman.d/hooks/999-sign_kernel_for_secureboot.hook
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux
+
+[Action]
+Description = Signing kernel with Machine Owner Key for Secure Boot
+When = PostTransaction
+Exec = /usr/bin/sbsign --key /etc/refind.d/keys/refind_local.key --cert /etc/refind.d/keys/refind_local.crt --output /boot/vmlinuz-linux /boot/vmlinuz-linux
+Depends = sbsigntools
+
+#/etc/pacman.d/hooks/refind.hook
+
+[Trigger]
+Operation=Upgrade
+Type=Package
+Target=refind-efi
+
+[Action]
+Description = Updating rEFInd on ESP
+When=PostTransaction
+Exec=/usr/bin/refind-install --yes --shim /usr/share/shim-signed/shimx64.efi --localkeys
+
+# TODO document /boot/refind_linux.conf
+

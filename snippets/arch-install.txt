@@ -47,7 +47,9 @@ mount /dev/mapper/vg0-var /mnt/var
 swapon /dev/mapper/vg0-swap
 
 #install base system
-pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog
+#pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog
+# chose bootmanager either grub or refind see secboot info
+pacstrap /mnt base base-devel  zsh vim git efibootmgr dialog wpa_supplicant
 
 # 'install' fstab
 genfstab -pU /mnt >> /mnt/etc/fstab

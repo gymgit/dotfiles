@@ -218,6 +218,9 @@ install_packages() {
             trycmd "$SUDO pacman -S --noconfirm virtualbox-guest-utils"
         fi
     fi
+    # TODO do the pacman stuff here
+    # sed -i 's/#[multilib]\n#Include/[multilib]\nInclude/g' /etc/pacman.conf
+    # install trizen (build from git)
     # TODO install ctf tools
     # pwntools, pwndbg, afl (on host), preeny, qemu, angr
     # TODO install + config yaourt
@@ -225,7 +228,7 @@ install_packages() {
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
-        trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock"
+        trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
         trycmd "$SUDO pacman -S --noconfirm ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-hack ttf-symbola"
         # TODO add mesa+gpu drivers
         #    trycmd "$SUDO pacman -S --noconfirm nvidia"
@@ -235,7 +238,7 @@ install_packages() {
         # trycmd + install yaourt first
        # yaourt -S i3-gaps-git
         #spwd=`pwd`
-        #trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat"
+        trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat scrot imagemagick"
 
         #git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
         #cd ~/progs/install/i3block
@@ -244,7 +247,7 @@ install_packages() {
         #cd $spwd
         trycmd "$SUDO pacman -S --noconfirm i3-gaps rofi i3status i3lock compton dunst"
         # update /etc/profile
-        echo "[*] updateing /etc/profile"
+        echo "[*] updating /etc/profile"
         # No trycmd here, f*** that escaping hell
         if [[ "$DEBUG" -ne 1 ]]; then
             echo '# autostart systemd default session on tty1
@@ -254,37 +257,38 @@ install_packages() {
         fi
         # install arandr
     fi
-    # PRogs to add:
-    # Install graphics:
-    # pacman -S mesa nvidia bumblebee xf86-video-intel lib32-virtualgl lib32-nvidia-utils mesa-demos primus lib32-primus bbswitch
-    # gpasswd -a gym bumblebee
-    # systemctl enable bumblebee
+
+    if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install progs?" ); then
+        # TODO auto detect video card
+        # PRogs to add:
+        # Install graphics:
+        # pacman -S mesa nvidia bumblebee xf86-video-intel lib32-virtualgl lib32-nvidia-utils mesa-demos primus lib32-primus bbswitch
+        # gpasswd -a gym bumblebee
+        # systemctl enable bumblebee
+        # Intel Graphics:
+        # add xf86-video-intel?
+        trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
+        trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
+        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-gtk dnsutils gnu-netcat nmap socat wireguard-tool wireguard-arch"
+        trycmd "$SUDO pacman -S --noconfirm virutalbox virtualbox-host-modules-arch"
+        # TODO add trizen for virtualbox extras
+        trycmd "$SUDO pacman -S --noconfirm keepassx2"
+        trycmd "$SUDO pacman -S --noconfirm unzip rsync"
+        trycmd "$SUDO pacman -S --noconfirm deluge firefox chromium "
+        trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger termite"
+        trycmd "$SUDO pacman -S --noconfirm vlc ffmpeg"
+        # trizen spoify pulseaudio-ctl
+        trycmd "$SUDO pacman -S --noconfirm texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra"
+    fi
 
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
 
-    # openssh wireshark-gtk dnsutils gnu-netcat nmap
-
-    # virtualbox virtualbox-host-modules-arch
-
-    # keepassx2 tresorit
-    # arandr xsel 
-
-    # unzip rsync
-
-    #deluge
-
-    # firefox
 
     # TODO install yaourt + update conf /etc/pacman.con (install multi lib aswell)
     # TODO install userspace (see arch inst)
     # chromium yolo: chromium-widevine pepper-flash spotify
-    #install scrot + imagemagick (foor lock screen)
 
 
-    # trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger gpicview vlc arandr termite"
-    ## should have separate media install
-    # trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
-    # yolo -S pulseaudio-ctl (for controlling volume)
     # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
     # gdb gcc clang python2-pip pyhton-pip
 

@@ -337,7 +337,8 @@ install_config() {
         if [[ ! -z `which $app` ]]; then
             # this is a temporary hack
             if [[ "$app" == "vim" ]]; then
-                install_dein
+                #install_dein
+                echo "TODO install vim plugins"
             elif [[ "$app" == "zsh" ]]; then
                 install_oh_my_zsh
             fi

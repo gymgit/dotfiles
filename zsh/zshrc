@@ -88,6 +88,71 @@ source $ZSH/oh-my-zsh.sh
 export EDITOR='vim'
 #export PATH="$HOME/.bin:$PATH"
 
+# TODO get preview working
+#export FZF_DEFAULT_OPTS='--height=70% --preview="cat {}" --preview-window=right:60%:wrap'
+#export FZF_DEFAULT_COMMAND='rg --files'
+#export FZF_CTRL_T_COMMAND='$FZF_DEFAULT_COMMAND'
+
+# fd - Find any directory and cd to selected directory
+
+fdd() {
+    local dir
+    dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+# fda - including hidden directories
+fda() {
+  local dir
+  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+# cf - fuzzy cd from anywhere
+# ex: cf word1 word2 ... (even part of a file name)
+# zsh autoload function
+cf() {
+  local file
+
+  file="$(locate -Ai -0 $@ | grep -z -vE '~$' | fzf --read0 -0 -1)"
+
+  if [[ -n $file ]]
+  then
+     if [[ -d $file ]]
+     then
+        cd -- $file
+     else
+        cd -- ${file:h}
+     fi
+  fi
+}
+
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  rg --files-with-matches --no-messages $1 | fzf --preview "highlight -O ansi {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 $1 || rg --ignore-case --pretty --context 10 $1 {}"
+}
+
+# fe [FUZZY PATTERN] - Open the selected file with the default editor
+#   - Bypass fuzzy finder if there's only one match (--select-1)
+#   - Exit if there's no match (--exit-0)
+fe() {
+  local files
+  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
+  [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+}
+
+# fkill - kill processes - list only the ones you can kill. Modified the earlier script.
+fkill() {
+    local pid 
+    if [ "$UID" != "0" ]; then
+        pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
+    else
+        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    fi  
+
+    if [ "x$pid" != "x" ]
+    then
+        echo $pid | xargs kill -${1:-9}
+    fi  
+}
 
 # mkvirtualenv fix
 
@@ -102,6 +167,9 @@ fi
 alias yolo="yaourt"
 alias sl="ls"
 alias packman="pacman"
+alias suod="sudo"
+alias dfkj="sudo"
+alias cat="bat"
 #alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # bindings
 bindkey -e
@@ -109,3 +177,4 @@ bindkey -e
 # bindkey "^N" down-line-or-search
 bindkey "^P" history-beginning-search-backward
 bindkey "^N" history-beginning-search-forward
+#bindkey "^M" copy-prev-shell-word

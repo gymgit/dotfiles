@@ -1,37 +1,38 @@
 font pango:Hack Bold 6
 
-exec --no-startup-id xrandr --dpi 96
+exec --no-startup-id xrandr --dpi 144
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-    status_command i3blocks
-	i3bar_command i3bar -t
-	position top
-	#font pango:Hack:style=Bold 10
-	font pango:Hack Bold 10
-	strip_workspace_numbers yes
-	separator_symbol "-"
-	workspace_buttons yes
-	bindsym button4 nop
-	bindsym button5 nop
-	tray_output none
-	tray_padding 0
-	height 22
-	colors {
-		statusline 		$white
-		background		$barblack
-		separator		$barblack
-#                           BORDER		    BACKGROUND      TEXT
-		focused_workspace	$barblack   	$barblack   	$blue
-		inactive_workspace	$barblack   	$barblack   	$white
-		active_workspace	$barblack   	$barblack   	$white
-		urgent_workspace	$darkred	    $darkred        $transparent
-		binding_mode		$darkred	    $darkred        $transparent
-	}
-}
-gaps outer 0
+# bar {
+#     status_command i3blocks -c /home/user/.config/i3blocks/i3blocks.conf
+# 	i3bar_command i3bar -t
+# 	position top
+# 	#font pango:Hack:style=Bold 10
+# 	font pango:Hack Nerd Font 8
+# 	strip_workspace_numbers yes
+# 	separator_symbol "-"
+# 	workspace_buttons yes
+# 	bindsym button4 nop
+# 	bindsym button5 nop
+# 	tray_output none
+# 	tray_padding 0
+# 	height 30
+# 	colors {
+# 		statusline 		$white
+# 		background		$barblack
+# 		separator		$barblack
+# #                           BORDER		    BACKGROUND      TEXT
+# 		focused_workspace	$barblack   	$barblack   	$blue
+# 		inactive_workspace	$barblack   	$barblack   	$white
+# 		active_workspace	$barblack   	$barblack   	$white
+# 		urgent_workspace	$darkred	    $darkred        $transparent
+# 		binding_mode		$darkred	    $darkred        $transparent
+# 	}
+# }
+# gaps outer 0
 gaps inner 5
 
+exec --no-startup-id /home/user/.bin/polybar.sh
 for_window [class="^.*"] border pixel 2
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false
@@ -49,17 +50,17 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id "pulseaudio-ctl up 5"
 bindsym XF86AudioLowerVolume exec --no-startup-id "pulseaudio-ctl down 5"
 bindsym XF86Explorer exec --no-startup-id "toggle_screen.sh"
 #
-workspace $ws1 output DP-4
-workspace $ws2 output DP-3.1
-workspace $ws3 output DP-3.1
-workspace $ws4 output DP-3.2
-workspace $ws5 output DP-3.2
-workspace $ws9 output DP-3.2
-workspace $ws10 output DP-3.2
+workspace $ws1 output DP-2-3
+workspace $ws2 output DP-2-2
+workspace $ws3 output DP-2-2
+#workspace $ws4 output DP-3
+# workspace $ws5 output DP-3.2
+# workspace $ws9 output DP-3.2
+workspace $ws10 output eDP-1
 
 #exec --no-startup-id i3-msg 'workspace 9: ☺; exec skypeforlinux; exec firefox --new-window --url www.gmail.com --url spamandhex.slack.com --url http://10.169.146.250:3000; exec thunderbird'
 #exec --no-startup-id i3-msg 'workspace 2: @; exec firefox; exec termite'
-exec --no-startup-id i3-msg 'workspace 3: >_; exec termite'
+exec --no-startup-id i3-msg 'workspace 1term; exec termite'
 
 #workspace $ws2 output HDMI-0
 #workspace $ws3 output HDMI-0

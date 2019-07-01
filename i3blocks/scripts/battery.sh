@@ -36,13 +36,14 @@ if ($acpi !~ /: (\w+), (\d+)%/) {
 $status = $1;
 $percent = $2;
 $full_text = "$percent%";
-
-if ($status eq 'Discharging') {
-	$full_text .= ' DIS';
-} elsif ($status eq 'Charging') {
-	$full_text .= ' CHR';
-}
-
+#
+# if ($status eq 'Discharging') {
+# 	$full_text .= ' DIS';
+# } elsif ($status eq 'Charging') {
+# 	$full_text .= ' CHR';
+# }
+# 
+# TODO change glyphs
 $short_text = $full_text;
 
 if ($acpi =~ /(\d\d:\d\d):/) {

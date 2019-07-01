@@ -1,5 +1,6 @@
 pacman -S gdb capstone binwalk qemu ding-libs unicorn
-pacman -S checksec ropper
+pacman -S checksec ropper radare2
+pacman -S python-opengl arj cpio mtd-utils p7zip squashfs-tools unrar
 yolo -S ropgadget
 mkvirtualenv -p /usr/bin/python2.7 ctf || workon ctf
 pip install angr pwntools

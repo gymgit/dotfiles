@@ -203,6 +203,7 @@ install_packages() {
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         elif [[ ! -z "$PAC" ]]; then
             trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
+            trycmd "$SUDO pacman -S --noconfirm rust rust-racer mono mono-tools boost"
             [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
         fi
 
@@ -229,14 +230,12 @@ install_packages() {
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
         trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
-        trycmd "$SUDO pacman -S --noconfirm ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-hack ttf-symbola"
-        # TODO add mesa+gpu drivers
+        trycmd "$SUDO pacman -S --noconfirm xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-font font-mathematica" # ttf-hack ttf-symbola"
+        trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
         #    trycmd "$SUDO pacman -S --noconfirm nvidia"
-        # TODO add git install for i3 and i3 blocks
-	# T
 
         # trycmd + install yaourt first
-       # yaourt -S i3-gaps-git
+        # yaourt -S i3-gaps-git
         #spwd=`pwd`
         trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat scrot imagemagick"
 
@@ -246,6 +245,10 @@ install_packages() {
         #$SUDO make install
         #cd $spwd
         trycmd "$SUDO pacman -S --noconfirm i3-gaps rofi i3status i3lock compton dunst"
+        # TODO add better lock screen
+        # trizen -S betterlockscreen
+        #git clone https://github.com/pavanjadhaw/betterlockscreen
+        # cp betterlockscreen/betterlockscreen
         # update /etc/profile
         echo "[*] updating /etc/profile"
         # No trycmd here, f*** that escaping hell
@@ -255,7 +258,6 @@ install_packages() {
                 exec startx
             fi' | $SUDO tee -a /etc/profile
         fi
-        # install arandr
     fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install progs?" ); then
@@ -268,17 +270,21 @@ install_packages() {
         # Intel Graphics:
         # add xf86-video-intel?
         trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
-        trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio"
-        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-gtk dnsutils gnu-netcat nmap socat wireguard-tool wireguard-arch"
-        trycmd "$SUDO pacman -S --noconfirm virutalbox virtualbox-host-modules-arch"
+        trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
+        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch"
+        trycmd "$SUDO pacman -S --noconfirm virtualbox virtualbox-host-modules-arch"
         # TODO add trizen for virtualbox extras
-        trycmd "$SUDO pacman -S --noconfirm keepassx2"
+        trycmd "$SUDO pacman -S --noconfirm keepassxc"
         trycmd "$SUDO pacman -S --noconfirm unzip rsync"
         trycmd "$SUDO pacman -S --noconfirm deluge firefox chromium "
-        trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger termite"
+        trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger termite feh"
         trycmd "$SUDO pacman -S --noconfirm vlc ffmpeg"
-        # trizen spoify pulseaudio-ctl
+        # trizen spotify pulseaudio-ctl
         trycmd "$SUDO pacman -S --noconfirm texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra"
+
+        trycmd "$SUDO pacman -S --noconfirm vlc ffmpeg"
+        # terminal smartness
+        trycmd "$SUDO pacman -S --noconfirm fzf ripgrep the_silver_searcher bat mlocate highlight fd"
     fi
 
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
@@ -294,7 +300,6 @@ install_packages() {
 
     # TODO 32 bit packages, lib32-nvidia-utils
     #INSTALL office tools libreoffice dia latex
-    # sudo pacman -S texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra
 }
     
 
@@ -316,7 +321,8 @@ install_config() {
         ["compton"]="compton/compton.conf;.config/compton.conf"\
         ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
         ["Xorg"]="Xorg/Xresources;.Xresources"\
-        ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
+        ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\ # TODO add the restart/reload files
+        # TODO replace with polybar
         ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
         ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")

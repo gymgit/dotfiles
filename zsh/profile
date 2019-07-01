@@ -40,6 +40,6 @@ export PATH
 export EDITOR="vim"
 
 # autostart def session on  tty1 (this should probably be in /etc/profile.d/
-if [[ -x "$(command -v startx)" ]] && [[ "$(tty)" == '/dev/tty1' ]]; then
-	exec startx
-fi
+#if [[ -x "$(command -v startx)" ]] && [[ "$(tty)" == '/dev/tty1' ]]; then
+#	exec startx
+#fi

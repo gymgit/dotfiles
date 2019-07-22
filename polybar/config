@@ -313,6 +313,7 @@ ws-icon-1 = 2web;
 ws-icon-2 = 3code;
 ws-icon-3 = 10spot;
 ws-icon-4 = 9chat;
+ws-icon-5 = 4ida;
 ws-icon-default = 
 
 label-dimmed-underline = ${root.background}

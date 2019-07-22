@@ -271,7 +271,7 @@ install_packages() {
         # add xf86-video-intel?
         trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
         trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
-        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch"
+        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch traceroute"
         trycmd "$SUDO pacman -S --noconfirm virtualbox virtualbox-host-modules-arch"
         # TODO add trizen for virtualbox extras
         trycmd "$SUDO pacman -S --noconfirm keepassxc"

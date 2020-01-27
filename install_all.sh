@@ -299,7 +299,12 @@ install_packages() {
     # gdb gcc clang python2-pip pyhton-pip
 
     # TODO 32 bit packages, lib32-nvidia-utils
-    #INSTALL office tools libreoffice dia latex
+    #INSTALL office tools libreoffice dia latex graphviz
+
+    # TODO install skype with flatpak -- flatpak run --talk-name=org.gnome.keyring com.skype.Client
+    # install gnome-keyring, seahorse, libsecret
+    # edit pam /etc/pam.d/passwd <-- password   optional    pam_gnome_keyring.so
+    # run 
 }
     
 

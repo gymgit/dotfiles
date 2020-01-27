@@ -36,3 +36,5 @@ rofi.auto-select: false
 *color14: #8ae7ff
 *color7:  #d6d6d6
 *color15: #dcdccc
+
+! Xft.dpi: 144

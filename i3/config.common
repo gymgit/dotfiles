@@ -270,8 +270,6 @@ bindsym $mod+b exec --no-startup-id firefox
 # fix razer binds
 #exec --no-startup-id "razer_binds.sh"
 
-# restore background
-exec --no-startup-id "nitrogen --restore"
 # printscreen
 bindsym Print exec --no-startup-id  "scrot ~/rand/screenshots/%Y-%m-%d-%T-screenshot.png"
 bindsym Shift+Print exec --no-startup-id  "scrot -s ~/rand/screenshots/%Y-%m-%d-%T-screenshot.png"

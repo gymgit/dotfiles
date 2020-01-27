@@ -34,6 +34,9 @@ exec_always --no-startup-id /home/user/.bin/setscreen.sh
 gaps inner 5
 
 exec_always --no-startup-id /home/user/.bin/polybar.sh
+# restore background
+exec --no-startup-id "nitrogen --restore"
+
 for_window [class="^.*"] border pixel 2
 #autostart
 exec --no-startup-id spotify --force-device-scale-factor=1.000001 --ui.track_notifications_enabled=false

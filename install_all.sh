@@ -177,15 +177,29 @@ get_dist() {
 
 install_packages() {
     echo "[*] Installing dist packages"
-    echo "[*] Updating package repos"
+    #echo "[*] Updating package repos"
 
-    if [[ ! -z "$APT" ]]; then
-        trycmd "$SUDO apt-get update"
-    elif [[ ! -z "$PAC" ]]; then
+    #if [[ ! -z "$APT" ]]; then
+    #    trycmd "$SUDO apt-get update"
+    #elif [[ ! -z "$PAC" ]]; then
         # have to upgrade, partial upgrades suck
-        trycmd "$SUDO pacman -Syu"
-    fi
+    #    trycmd "$SUDO pacman -Syu"
+    #fi
     
+    if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_BASE"  ]] || yesno "Create dir layout?" ); then
+        trycmd "mkdir -p ~/dev"
+        trycmd "mkdir -p ~/doc"
+        trycmd "mkdir -p ~/dwnload"
+        trycmd "mkdir -p ~/ctf"
+        trycmd "mkdir -p ~/rand"
+        trycmd "mkdir -p ~/progs/inst"
+        trycmd "mkdir -p ~/progs/src"
+        trycmd "mkdir -p ~/progs/win"
+        trycmd "mkdir -p ~/.bin"
+        trycmd "mkdir -p ~/rand/mnt"
+        trycmd "mkdir -p ~/rant/screenshots"
+    fi
+
     if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux, curl, wget)?" ; then
         echo "[*] Installing essentials"
          
@@ -214,24 +228,35 @@ install_packages() {
         echo "[*] Installing virtualbox guest additions"
          
         if [[ ! -z "$APT" ]]; then
-            trycmd "$SUDO apt-get -y install build-essential module-assistant virtualbox-guest-dkms virtualbox-guest-utils"
+            #trycmd "$SUDO apt-get -y install build-essential module-assistant virtualbox-guest-dkms virtualbox-guest-utils"
+            trycmd "$SUDO apt-get -y install build-essential virtualbox-guest-x11"
         elif [[ ! -z "$PAC" ]]; then
             trycmd "$SUDO pacman -S --noconfirm virtualbox-guest-utils"
         fi
     fi
-    # TODO do the pacman stuff here
-    # sed -i 's/#[multilib]\n#Include/[multilib]\nInclude/g' /etc/pacman.conf
-    # install trizen (build from git)
+
+    if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install trizen and update conf?" ); then
+    trycmd "$SUDO sed -i 's/#[multilib]\n#Include/[multilib]\nInclude/g' /etc/pacman.conf"
     # TODO install ctf tools
+    # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
+    # -S python-pwntools
     # pwntools, pwndbg, afl (on host), preeny, qemu, angr
-    # TODO install + config yaourt
-    # install tizen instead (See the scripts snippet)
+    cwd=$PWD
+    trycmd "mkdir -p ~/progs/inst"
+    cd ~/progs/inst
+    trycmd "git clone https://aur.archlinux.org/trizen.git && cd trizen"
+    trycmd "$SUDO makepkg -si"
+    trycmd "trizen -Syu -a"
+    cd $cwd
+
+    fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
         trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
         trycmd "$SUDO pacman -S --noconfirm xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-font font-mathematica" # ttf-hack ttf-symbola"
-        trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
+        #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
+        trycmd "trizen -S --noconfirm polybar nerd-fonts-complete"
         #    trycmd "$SUDO pacman -S --noconfirm nvidia"
 
         # trycmd + install yaourt first
@@ -245,7 +270,7 @@ install_packages() {
         #$SUDO make install
         #cd $spwd
         trycmd "$SUDO pacman -S --noconfirm i3-gaps rofi i3status i3lock compton dunst"
-        # TODO add better lock screen
+        trycmd "trizen -S --noconfirm betterlockscreen"
         # trizen -S betterlockscreen
         #git clone https://github.com/pavanjadhaw/betterlockscreen
         # cp betterlockscreen/betterlockscreen
@@ -269,10 +294,15 @@ install_packages() {
         # systemctl enable bumblebee
         # Intel Graphics:
         # add xf86-video-intel?
-        trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
         trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
         trycmd "$SUDO pacman -S --noconfirm openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch traceroute"
-        trycmd "$SUDO pacman -S --noconfirm virtualbox virtualbox-host-modules-arch"
+        if ! testvm; then
+            trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
+            trycmd "$SUDO pacman -S --noconfirm xf86-video-intel"
+            trycmd "$SUDO pacman -S --noconfirm virtualbox virtualbox-host-modules-arch"
+        else
+            trycmd "$SUDO pacman -S --noconfirm xf86-video-vmware"
+        fi
         # TODO add trizen for virtualbox extras
         trycmd "$SUDO pacman -S --noconfirm keepassxc"
         trycmd "$SUDO pacman -S --noconfirm unzip rsync"
@@ -290,13 +320,10 @@ install_packages() {
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
 
 
-    # TODO install yaourt + update conf /etc/pacman.con (install multi lib aswell)
     # TODO install userspace (see arch inst)
     # chromium yolo: chromium-widevine pepper-flash spotify
 
 
-    # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
-    # gdb gcc clang python2-pip pyhton-pip
 
     # TODO 32 bit packages, lib32-nvidia-utils
     #INSTALL office tools libreoffice dia latex graphviz
@@ -327,8 +354,8 @@ install_config() {
         ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
         ["Xorg"]="Xorg/Xresources;.Xresources"\
         ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\ # TODO add the restart/reload files
-        # TODO replace with polybar
-        ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
+        ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\ #deprecated
+        ["polybar"]="polybar/polybar.sh;.bin/polybar.sh polybar/config;.config/polybar/config"\
         ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")
 

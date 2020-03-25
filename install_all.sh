@@ -236,7 +236,7 @@ install_packages() {
     fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install trizen and update conf?" ); then
-    trycmd "$SUDO sed -i 's/#[multilib]\n#Include/[multilib]\nInclude/g' /etc/pacman.conf"
+    trycmd "$SUDO sed -i s/#[multilib]\n#Include/[multilib]\nInclude/g /etc/pacman.conf"
     # TODO install ctf tools
     # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
     # -S python-pwntools

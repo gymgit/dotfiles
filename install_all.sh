@@ -187,17 +187,17 @@ install_packages() {
     #fi
     
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_BASE"  ]] || yesno "Create dir layout?" ); then
-        trycmd "mkdir -p ~/dev"
-        trycmd "mkdir -p ~/doc"
-        trycmd "mkdir -p ~/dwnload"
-        trycmd "mkdir -p ~/ctf"
-        trycmd "mkdir -p ~/rand"
-        trycmd "mkdir -p ~/progs/inst"
-        trycmd "mkdir -p ~/progs/src"
-        trycmd "mkdir -p ~/progs/win"
-        trycmd "mkdir -p ~/.bin"
-        trycmd "mkdir -p ~/rand/mnt"
-        trycmd "mkdir -p ~/rant/screenshots"
+        trycmd "mkdir -p $HOME/dev"
+        trycmd "mkdir -p $HOME/doc"
+        trycmd "mkdir -p $HOME/dwnload"
+        trycmd "mkdir -p $HOME/ctf"
+        trycmd "mkdir -p $HOME/rand"
+        trycmd "mkdir -p $HOME/progs/inst"
+        trycmd "mkdir -p $HOME/progs/src"
+        trycmd "mkdir -p $HOME/progs/win"
+        trycmd "mkdir -p $HOME/.bin"
+        trycmd "mkdir -p $HOME/rand/mnt"
+        trycmd "mkdir -p $HOME/rant/screenshots"
     fi
 
     if [[ ! -z "$INSTALL_BASE" ]] || yesno "Install essentials (vim, git, zsh, tmux, curl, wget)?" ; then
@@ -214,11 +214,11 @@ install_packages() {
         echo "[*] Installing build tools"
         if [[ ! -z "$APT" ]]; then
             trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
-            [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
+            [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         elif [[ ! -z "$PAC" ]]; then
             trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
             trycmd "$SUDO pacman -S --noconfirm rust rust-racer mono mono-tools boost"
-            [[ -e ~/.venvs ]] && trycmd "mkdir ~/.venvs"
+            [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         fi
 
     fi
@@ -242,7 +242,7 @@ install_packages() {
     # -S python-pwntools
     # pwntools, pwndbg, afl (on host), preeny, qemu, angr
     cwd=$PWD
-    trycmd "mkdir -p ~/progs/inst"
+    trycmd "mkdir -p $HOME/progs/inst"
     cd ~/progs/inst
     trycmd "git clone https://aur.archlinux.org/trizen.git && cd trizen"
     trycmd "$SUDO makepkg -si"

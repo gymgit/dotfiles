@@ -256,7 +256,11 @@ install_packages() {
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts font-mathematica" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
-        trycmd "trizen -S --noconfirm polybar nerd-fonts-complete"
+        trycmd "trizen -S --noconfirm --needed polybar"
+        trycmd "trizen -S --noconfirm --needed nerd-fonts-hack"
+        #trycmd "trizen -S --noconfirm nerd-fonts-complete" #this is broken right now has also grown way too big
+        trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-font-awesome powerline-fonts" # ttf-hack ttf-symbola"
+
         #    trycmd "$SUDO pacman -S --noconfirm --needed nvidia"
 
         # trycmd + install yaourt first
@@ -270,7 +274,7 @@ install_packages() {
         #$SUDO make install
         #cd $spwd
         trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock compton dunst"
-        trycmd "trizen -S --noconfirm betterlockscreen"
+        trycmd "trizen -S --noconfirm --needed betterlockscreen"
         # trizen -S betterlockscreen
         #git clone https://github.com/pavanjadhaw/betterlockscreen
         # cp betterlockscreen/betterlockscreen

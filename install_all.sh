@@ -206,7 +206,7 @@ install_packages() {
         if [[ ! -z "$APT" ]]; then
             trycmd "$SUDO apt-get -y install git vim zsh tmux curl wget"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm git vim zsh tmux curl wget"
+            trycmd "$SUDO pacman -S --noconfirm --needed git vim zsh tmux curl wget"
         fi
     fi
 
@@ -216,8 +216,8 @@ install_packages() {
             trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
-            trycmd "$SUDO pacman -S --noconfirm rust rust-racer mono mono-tools boost"
+            trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
+            trycmd "$SUDO pacman -S --noconfirm --needed rust rust-racer mono mono-tools boost"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         fi
 
@@ -231,7 +231,7 @@ install_packages() {
             #trycmd "$SUDO apt-get -y install build-essential module-assistant virtualbox-guest-dkms virtualbox-guest-utils"
             trycmd "$SUDO apt-get -y install build-essential virtualbox-guest-x11"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm virtualbox-guest-utils"
+            trycmd "$SUDO pacman -S --noconfirm --needed virtualbox-guest-utils"
         fi
     fi
 
@@ -245,7 +245,7 @@ install_packages() {
     trycmd "mkdir -p $HOME/progs/inst"
     cd ~/progs/inst
     trycmd "git clone https://aur.archlinux.org/trizen.git && cd trizen"
-    trycmd "$SUDO makepkg -si"
+    trycmd "makepkg -si"
     trycmd "trizen -Syu -a"
     cd $cwd
 
@@ -253,23 +253,23 @@ install_packages() {
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
-        trycmd "$SUDO pacman -S --noconfirm xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
-        trycmd "$SUDO pacman -S --noconfirm xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-font font-mathematica" # ttf-hack ttf-symbola"
+        trycmd "$SUDO pacman -S --noconfirm --needed xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
+        trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts font-mathematica" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
         trycmd "trizen -S --noconfirm polybar nerd-fonts-complete"
-        #    trycmd "$SUDO pacman -S --noconfirm nvidia"
+        #    trycmd "$SUDO pacman -S --noconfirm --needed nvidia"
 
         # trycmd + install yaourt first
         # yaourt -S i3-gaps-git
         #spwd=`pwd`
-        trycmd "$SUDO pacman -S --noconfirm acpi bc lm_sensors openvpn playerctl sysstat scrot imagemagick"
+        trycmd "$SUDO pacman -S --noconfirm --needed acpi bc lm_sensors openvpn playerctl sysstat scrot imagemagick"
 
         #git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
         #cd ~/progs/install/i3block
         #make clean all
         #$SUDO make install
         #cd $spwd
-        trycmd "$SUDO pacman -S --noconfirm i3-gaps rofi i3status i3lock compton dunst"
+        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock compton dunst"
         trycmd "trizen -S --noconfirm betterlockscreen"
         # trizen -S betterlockscreen
         #git clone https://github.com/pavanjadhaw/betterlockscreen
@@ -294,27 +294,27 @@ install_packages() {
         # systemctl enable bumblebee
         # Intel Graphics:
         # add xf86-video-intel?
-        trycmd "$SUDO pacman -S --noconfirm alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
-        trycmd "$SUDO pacman -S --noconfirm openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch traceroute"
+        trycmd "$SUDO pacman -S --noconfirm --needed alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
+        trycmd "$SUDO pacman -S --noconfirm --needed openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch traceroute"
         if ! testvm; then
-            trycmd "$SUDO pacman -S --noconfirm mesa lib32-mesa vulkan-intel"
-            trycmd "$SUDO pacman -S --noconfirm xf86-video-intel"
-            trycmd "$SUDO pacman -S --noconfirm virtualbox virtualbox-host-modules-arch"
+            trycmd "$SUDO pacman -S --noconfirm --needed mesa lib32-mesa vulkan-intel"
+            trycmd "$SUDO pacman -S --noconfirm --needed xf86-video-intel"
+            trycmd "$SUDO pacman -S --noconfirm --needed virtualbox virtualbox-host-modules-arch"
         else
-            trycmd "$SUDO pacman -S --noconfirm xf86-video-vmware"
+            trycmd "$SUDO pacman -S --noconfirm --needed xf86-video-vmware"
         fi
         # TODO add trizen for virtualbox extras
-        trycmd "$SUDO pacman -S --noconfirm keepassxc"
-        trycmd "$SUDO pacman -S --noconfirm unzip rsync"
-        trycmd "$SUDO pacman -S --noconfirm deluge firefox chromium "
-        trycmd "$SUDO pacman -S --noconfirm evince nitrogen ranger termite feh"
-        trycmd "$SUDO pacman -S --noconfirm vlc ffmpeg"
+        trycmd "$SUDO pacman -S --noconfirm --needed keepassxc"
+        trycmd "$SUDO pacman -S --noconfirm --needed unzip rsync"
+        trycmd "$SUDO pacman -S --noconfirm --needed deluge firefox chromium "
+        trycmd "$SUDO pacman -S --noconfirm --needed evince nitrogen ranger termite feh"
+        trycmd "$SUDO pacman -S --noconfirm --needed vlc ffmpeg"
         # trizen spotify pulseaudio-ctl
-        trycmd "$SUDO pacman -S --noconfirm texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra"
+        trycmd "$SUDO pacman -S --noconfirm --needed texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra"
 
-        trycmd "$SUDO pacman -S --noconfirm vlc ffmpeg"
+        trycmd "$SUDO pacman -S --noconfirm --needed vlc ffmpeg"
         # terminal smartness
-        trycmd "$SUDO pacman -S --noconfirm fzf ripgrep the_silver_searcher bat mlocate highlight fd"
+        trycmd "$SUDO pacman -S --noconfirm --needed fzf ripgrep the_silver_searcher bat mlocate highlight fd"
     fi
 
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime

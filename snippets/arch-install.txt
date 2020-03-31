@@ -49,7 +49,7 @@ swapon /dev/mapper/vg0-swap
 #install base system
 #pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog
 # chose bootmanager either grub or refind see secboot info
-pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog wpa_supplicant neovim sudo tmux intel-ucode lvm2 linux linux-lts
+pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog wpa_supplicant wifi-menu neovim sudo tmux intel-ucode lvm2 linux linux-lts linux-firmware netctl dhcpcd ifplugd
 
 # 'install' fstab
 genfstab -pU /mnt >> /mnt/etc/fstab

@@ -255,7 +255,7 @@ install_packages() {
         echo "[*] installing xorg"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts font-mathematica" # ttf-hack ttf-symbola"
-        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock compton dunst"
+        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock-color compton dunst"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-font-awesome powerline-fonts" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
         trycmd "trizen -S --noconfirm --needed polybar"

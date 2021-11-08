@@ -38,3 +38,4 @@ rofi.auto-select: false
 *color15: #dcdccc
 
 ! Xft.dpi: 144
+Xcursor.size: 32

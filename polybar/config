@@ -99,7 +99,8 @@ font-7 = HackNerdFont:size=15;0
 
 modules-left = memory cpu filesystem i3
 modules-center = spotify
-modules-right = volume  wireless-network wired-network battery clock powermenu
+;modules-right = volume  wireless-network wired-network battery clock powermenu
+modules-right = volume  wireless-network wired-network clock powermenu
 
 tray-position = right
 
@@ -243,11 +244,13 @@ type = internal/fs
 interval = 25
 
 mount-0 = /
+mount-1 = /home
 
 label-mounted =   %free:6%
 label-mounted-foreground = ${colors.dampen}
 label-unmounted = %mountpoint% not mounted
 ;label-unmounted-foreground = ${colors.foreground-alt}
+
 
 [module/volume]
 type = internal/pulseaudio
@@ -272,13 +275,14 @@ label-muted-foreground = ${colors.unfocus}
 
 [module/wireless-network]
 type = internal/network
-interface = wlp3s0
+interface = wlp0s20f3
 interval = 2.0
 ping-interval = 10
 
-format-connected = <ramp-signal> <label-connected>
-label-connected = %essid%
-label-disconnected =  
+;format-connected = <ramp-signal> <label-connected>
+format-connected = <label-connected>
+label-connected = 直 %essid%
+label-disconnected = 睊
 label-disconnected-foreground = ${colors.unfocus}
 
 ramp-signal-0 = 
@@ -289,18 +293,20 @@ ramp-signal-4 = 
 
 animation-packetloss-0 = 
 animation-packetloss-0-foreground = ${colors.warn}
-animation-packetloss-1 = 
+;animation-packetloss-1 = 
+animation-packetloss-1 = 直
 animation-packetloss-1-foreground = ${bar/top.foreground}
 animation-packetloss-framerate = 500
 
 [module/wired-network]
 type = internal/network
-interface = enp0s31f6
+interface = eno1
 interval = 2.0
 
 ;label-connected =   %local_ip%
-label-connected = 
-label-disconnected = 
+label-connected-font = 3 
+label-connected = 
+label-disconnected = 
 label-disconnected-foreground = ${colors.unfocus}
 
 [module/i3]
@@ -320,7 +326,7 @@ label-dimmed-underline = ${root.background}
 
 label-focused = %icon%
 #label-focused-foreground = #f3f3f3
-label-focused-background = ${colors.focused}
+#label-focused-background = ${colors.focused}
 ;label-focused-underline = #${colors.accent}
 label-focused-underline = ${colors.highl}
 label-focused-font = 6
@@ -339,7 +345,9 @@ label-urgent-font = 6
 label-urgent-padding = 4
 
 label-visible = %icon%
-label-visible-background = ${colors.focused}
+label-visible-underline = ${colors.foreground}
+#label-visible-underline = ${colors.unfocus}
+#label-visible-background = ${colors.focused}
 label-visible-font = 6
 label-visible-padding = 4
 
@@ -395,7 +403,7 @@ exec = "playerctl --player=spotify metadata -f '{{artist}} - {{title}}'"
 label = %output%
 
 double-click-left = "playerctl next"
-double-click-right = "playerctl next"
+double-click-right = "playerctl prev"
 click-right = "playerctl play-pause"
 ; [module/i3]
 ; type = internal/i3

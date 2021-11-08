@@ -20,6 +20,7 @@ au FileType python map <buffer> <leader>D ?def
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
+"au FileType python set expandtab
 
 
 """"""""""""""""""""""""""""""
@@ -62,4 +63,23 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 """"""""""""""""""""""""""""""
 " => Shell section
 """"""""""""""""""""""""""""""
+
+
+""""""""""""""""""""""""""""""
+" => HTML and md
+""""""""""""""""""""""""""""""
+
+au FileType markdown,html setl tabstop=2
+au FileType markdown,html setl shiftwidth=2
+
+""""""""""""""""""""""""""""""
+" => C, Cpp
+""""""""""""""""""""""""""""""
+au FileType c,cpp setl commentstring=//\ %s
+
+
+""""""""""""""""""""""""""""""
+" => Latex
+""""""""""""""""""""""""""""""
+autocmd Filetype tex let b:surround_{char2nr('o')} = "\\mintinline{text}{\r}"
 

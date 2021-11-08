@@ -45,6 +45,22 @@ nmap <leader>hp <Plug>GitGutterPreviewHunk
 
 
 
+" maybe use to comment block comments too   \ 'commentstring_rx': '\%%(// %s\)', 
+" let g:tcomment#inline_fmt_c = {
+"     \ 'rxmid': '',
+"     \ 'rxend': '', 
+"     \ 'commentstring': '// %s', 
+"     \ 'commentstring_rx': '\%%(// %s\|/* %s */\)', 
+"     \ 'replacements': {},
+"     \ 'rxbeg': ''}
+
+" let g:tcomment#inline_fmt_c = {'commentstring': '// %s' }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Commentary
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let b:commentary_startofline = 1
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Gitv
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -56,6 +72,7 @@ nnoremap <silent> <leader>gV :Gitv! --date-order<CR>
 " => YouCompleteMe
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ycm_global_ycm_extra_conf = expand('~/vimrt/others/ycm_gextra_conf.py')
+let g:ycm_extra_conf_globlist = ['~/dev/projects/*', '~/ctf/srces/*']
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_always_populate_location_list = 1
@@ -84,6 +101,10 @@ nnoremap <silent> <leader>fi :YcmCompleter FixIt<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
+" cs'" -> change ' to " 
+" ds' -> delete surrounding '
+" ys[selector][char] -> surround selected text with char (ysiw[)
+nmap <leader>s ysiw
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UndoTree
@@ -127,53 +148,53 @@ nnoremap <leader>/ :Grep<space>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Denite
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if executable('ag')
-	call denite#custom#var('grep', 'command', ['ag'])
-	call denite#custom#var('grep', 'default_opts', ['-i', '--vimgrep'])
-	call denite#custom#var('grep', 'recursive_opts', [])
-	call denite#custom#var('grep', 'pattern_opt', [])
-	call denite#custom#var('grep', 'separator', ['--'])
-	call denite#custom#var('grep', 'final_opts', [])
-	call denite#custom#var('file/rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
-elseif executable('rg')
-	" Ripgrep
-  call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob'])
-  " call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
-  call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
-  call denite#custom#var('grep', 'recursive_opts', [])
-  call denite#custom#var('grep', 'final_opts', [])
-  call denite#custom#var('grep', 'separator', ['--'])
-  call denite#custom#var('grep', 'default_opts',
-        \ ['-i', '--vimgrep', '--no-heading'])
-endif
-
-call denite#custom#option('default', 'prompt', '»')
-call denite#custom#option('_', 'highlight_matched_char', 'no')
-call denite#custom#option('_', 'smartcase', 'true')
-call denite#custom#option('_', 'reversed', 'true')
-call denite#custom#option('_', 'auto_resize', 'true')
-call denite#custom#source('_', 'matchers', ['matcher/cpsm'])
-call denite#custom#source('_', 'sorters', ['sorter/sublime'])
-call denite#custom#map('insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
-call denite#custom#map('insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
-call denite#custom#map('insert', '<ESC>', '<denite:enter_mode:normal>', 'noremap')
-"call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
-call denite#custom#map('insert', '<C-o>', '<denite:do_action:tabopen>', 'noremap')
-call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
-call denite#custom#map('insert', '<C-h>', '<denite:do_action:split>', 'noremap')
-
-call denite#custom#map('normal', 'gg', '<denite:move_to_first_line>', 'noremap')
-call denite#custom#map('normal', 'st', '<denite:do_action:tabopen>', 'noremap')
-call denite#custom#map('normal', 'sv', '<denite:do_action:vsplit>', 'noremap')
-call denite#custom#map('normal', 'sh', '<denite:do_action:split>', 'noremap')
-call denite#custom#map('normal', 'r', '<denite:redraw>', 'noremap')
-
-nnoremap <silent> <leader>o :Denite file/rec<cr>
-"nnoremap <silent> <leader>tt :Denite file/rec<cr>
-nnoremap <silent> <leader>i :Denite buffer<cr>
-nnoremap <silent> <leader>t :Denite outline: -mode=normal<cr>
-nnoremap <silent> <leader>u/ :Denite grep<cr>
-nnoremap <silent> <leader>uy :Denite neoyank<cr>
+" if executable('rg')
+" 	" Ripgrep
+"   call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob'])
+"   " call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
+"   call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+"   call denite#custom#var('grep', 'recursive_opts', [])
+"   call denite#custom#var('grep', 'final_opts', [])
+"   call denite#custom#var('grep', 'separator', ['--'])
+"   call denite#custom#var('grep', 'default_opts',
+"         \ ['-i', '--vimgrep', '--no-heading'])
+" elseif executable('ag')
+" 	call denite#custom#var('grep', 'command', ['ag'])
+" 	call denite#custom#var('grep', 'default_opts', ['-i', '--vimgrep'])
+" 	call denite#custom#var('grep', 'recursive_opts', [])
+" 	call denite#custom#var('grep', 'pattern_opt', [])
+" 	call denite#custom#var('grep', 'separator', ['--'])
+" 	call denite#custom#var('grep', 'final_opts', [])
+" 	call denite#custom#var('file/rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
+" endif
+"
+" call denite#custom#option('default', 'prompt', '»')
+" call denite#custom#option('_', 'highlight_matched_char', 'no')
+" call denite#custom#option('_', 'smartcase', 'true')
+" call denite#custom#option('_', 'reversed', 'true')
+" call denite#custom#option('_', 'auto_resize', 'true')
+" call denite#custom#source('_', 'matchers', ['matcher/cpsm'])
+" call denite#custom#source('_', 'sorters', ['sorter/sublime'])
+" call denite#custom#map('insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
+" call denite#custom#map('insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
+" call denite#custom#map('insert', '<ESC>', '<denite:enter_mode:normal>', 'noremap')
+" "call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+" call denite#custom#map('insert', '<C-o>', '<denite:do_action:tabopen>', 'noremap')
+" call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+" call denite#custom#map('insert', '<C-h>', '<denite:do_action:split>', 'noremap')
+"
+" call denite#custom#map('normal', 'gg', '<denite:move_to_first_line>', 'noremap')
+" call denite#custom#map('normal', 'st', '<denite:do_action:tabopen>', 'noremap')
+" call denite#custom#map('normal', 'sv', '<denite:do_action:vsplit>', 'noremap')
+" call denite#custom#map('normal', 'sh', '<denite:do_action:split>', 'noremap')
+" call denite#custom#map('normal', 'r', '<denite:redraw>', 'noremap')
+"
+" nnoremap <silent> <leader>o :Denite file/rec<cr>
+" "nnoremap <silent> <leader>tt :Denite file/rec<cr>
+" nnoremap <silent> <leader>i :Denite buffer<cr>
+" nnoremap <silent> <leader>t :Denite outline: -mode=normal<cr>
+" nnoremap <silent> <leader>u/ :Denite grep<cr>
+" nnoremap <silent> <leader>uy :Denite neoyank<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -191,19 +212,6 @@ nnoremap <silent> <leader>uy :Denite neoyank<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <F8> :TagbarToggle<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => NerdTree
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <F7> :NERDTreeToggle<CR>
-nnoremap <silent> <Leader>f :NERDTreeFind<CR>
-
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-let NERDTreeAutoDeleteBuffer = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let NERDTreeStatusline = "NERD"
-highlight EndOfBuffer ctermfg=black
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Workspace
@@ -216,3 +224,62 @@ let g:workspace_session_directory = expand('~/.vimrt/temp_dirs/')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <silent> <leader>wh :CloseHiddenBuffers<CR>
 nnoremap <silent> <leader>wc :CloseNamelessBuffers<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fzf
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:fzf_command_prefix = 'Fz'
+
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+
+nnoremap <leader>o :FzFiles<cr>
+nnoremap <leader>i :FzBuffer<cr>
+" ctrl + / is used to grep for whatever
+nnoremap <C-_> :FzRg 
+" search for the word under the cursor
+nnoremap <expr> <C-g> ':FzRg '.expand("<cword>").'<cr>'
+" grep for the visual mode selected item
+vnoremap <C-g> "ry :FzRg <C-r>r<cr>
+" search in ctags for word under cursor
+nnoremap <expr> <C-8> ':FzTags '.expand("<cword>").'<cr>'
+" fzf commits
+nnoremap <leader>c :FzCommits<cr>
+
+" 
+function! RgPath(query, path)
+    call fzf#vim#grep(printf("rg --column --line-number --no-heading --color=always --smart-case %s %s", shellescape(a:query), shellescape(expand(a:path))), 1, fzf#vim#with_preview(), 0)
+endfunction
+
+command! -bang -nargs=* RgCurr call RgPath(<q-args>, expand('%:p:h'))
+nnoremap <C-?> :RgCurr 
+" grep in current directory
+" function! RgCurr(query)
+"     call RgPath(a:query, expand('%:p:h'))
+" endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NerdTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F7> :NERDTreeToggle<CR>
+nnoremap <silent> <Leader>f :NERDTreeFind<CR>
+
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeStatusline = "NERD"
+highlight EndOfBuffer ctermfg=black
+
+autocmd VimEnter * call NERDTreeAddKeyMap({'quickhelpText': '(f)ind in folder', 'key': 'f', 'callback': 'NERDTreeRgCommand', 'override': '1'})
+
+function! NERDTreeRgCommand()
+    let path = g:NERDTreeFileNode.GetSelected().path.getDir().str()
+    let cmd = input('Grep: ')
+    "echo cmd . ' ' . path
+    wincmd p
+    call RgPath(cmd, path)
+endfunction

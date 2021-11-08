@@ -41,6 +41,8 @@ export PATH
 
 export EDITOR="vim"
 
+
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
 # autostart def session on  tty1 (this should probably be in /etc/profile.d/
 #if [[ -x "$(command -v startx)" ]] && [[ "$(tty)" == '/dev/tty1' ]]; then
 #	exec startx

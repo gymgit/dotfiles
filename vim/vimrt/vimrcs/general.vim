@@ -4,7 +4,7 @@
 " Sets how many lines of history VIM has to remember
 set history=1000
 
-set undolevels=1000
+set undolevels=5000
 
 " Enable filetype plugins
 filetype plugin on
@@ -54,6 +54,11 @@ elseif executable('ag')
 else
     set grepprg = "grep"
 endif
+
+
+" set better mouse integration with tmux
+set ttymouse=xterm2
+set mouse=a
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -375,13 +380,15 @@ endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
+" use system clipboard as a default
+set clipboard=unnamedplus
 "system shortcut paste/yank
-vmap <Leader>y "+y
-vmap <Leader>d "+d
-nmap <Leader>p "+p
-nmap <Leader>P "+P
-vmap <Leader>p "+p
-vmap <Leader>P "+P
+" vmap <Leader>y "+y
+" vmap <Leader>d "+d
+" nmap <Leader>p "+p
+" nmap <Leader>P "+P
+" vmap <Leader>p "+p
+" vmap <Leader>P "+P
 
 "jump to end of paste
 vnoremap <silent> y y`]
@@ -391,8 +398,20 @@ nnoremap <silent> p p`]
 " select pasted
 noremap gV `[v`]
 
+" Quick replace
+nnoremap S :%s//g<Left><Left>
 
+" relative path (src/foo.txt)
+nnoremap <leader>cf :let @+=expand("%")<CR>
 
+" absolute path (/something/src/foo.txt)
+nnoremap <leader>cF :let @+=expand("%:p")<CR>
+
+" filename (foo.txt)
+nnoremap <leader>ct :let @+=expand("%:t")<CR>
+
+" directory name (/something/src)
+nnoremap <leader>ch :let @+=expand("%:p:h")<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

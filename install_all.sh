@@ -216,11 +216,14 @@ install_packages() {
             trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv"
+            trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv man-db man-pages ctags"
             trycmd "$SUDO pacman -S --noconfirm --needed rust rust-racer mono mono-tools boost"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         fi
 
+        # TODO install ncurse 5 compat
+        # 
+        # trycmd "trizen -S --noconfirm --needed ncurses5-compat-libs " 
     fi
 
     # install vbox guest stuff
@@ -237,14 +240,11 @@ install_packages() {
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install trizen and update conf?" ); then
     trycmd "$SUDO sed -i s/#[multilib]\n#Include/[multilib]\nInclude/g /etc/pacman.conf"
-    # TODO install ctf tools
-    # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
-    # -S python-pwntools
-    # pwntools, pwndbg, afl (on host), preeny, qemu, angr
     cwd=$PWD
     trycmd "mkdir -p $HOME/progs/inst"
     cd ~/progs/inst
-    trycmd "git clone https://aur.archlinux.org/trizen.git && cd trizen"
+    trycmd "git clone https://aur.archlinux.org/trizen.git"
+    trycmd "cd trizen"
     trycmd "makepkg -si"
     trycmd "trizen -Syu -a"
     cd $cwd
@@ -259,7 +259,7 @@ install_packages() {
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-font-awesome powerline-fonts" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
         trycmd "trizen -S --noconfirm --needed polybar"
-        trycmd "trizen -S --noconfirm --needed nerd-fonts-hack"
+        trycmd "trizen -S --noconfirm --needed nerd-fonts-hack papirus-icon-theme"
         #trycmd "trizen -S --noconfirm nerd-fonts-complete" #this is broken right now has also grown way too big
 
         #    trycmd "$SUDO pacman -S --noconfirm --needed nvidia"
@@ -319,7 +319,22 @@ install_packages() {
         trycmd "$SUDO pacman -S --noconfirm --needed vlc ffmpeg"
         # terminal smartness
         trycmd "$SUDO pacman -S --noconfirm --needed fzf ripgrep the_silver_searcher bat mlocate highlight fd"
+        # TODO install ctf tools
+        # TODO install basic dbg (gdb, peda, pwntools, capstone, pwndbg, libc src)
+        # -S python-pwntools
+        # pwntools, pwndbg, afl (on host), preeny, qemu, angr
+        trycmd "$SUDO pacman -S --noconfirm --needed python-pwntools qemu"
+        trycmd "trizen -S --noconfirm --needed pwndbg gdb-multiarch"
+        # install gvim for more features
+        trycmd "$SUDO pacman -S --noconfirm --needed gvim"
+        
     fi
+
+    # TODO research tools
+
+    # trizen: simg-tools setools
+
+
 
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
 
@@ -346,8 +361,8 @@ install_config() {
     MACHINE='vm'
     if [[ $(hostname) == "LaptopArch" ]]; then
         MACHINE='laptop'
-    elif [[ $(hostname) == "MableArch" ]] || [[ $(hostname) == "EncsFuzz" ]]; then
-        MACHINE='pc'
+    elif [[ $(hostname) == "MableArch" ]] || [[ $(hostname) == "castillo" ]]; then
+        MACHINE='worklt2'
     elif [[ $(hostname) == "worklt" ]]; then
         MACHINE='worklt'
     fi
@@ -357,8 +372,8 @@ install_config() {
         ["compton"]="compton/compton.conf;.config/compton.conf"\
         ["zsh"]="zsh/zprofile;.zprofile zsh/zshrc;.zshrc zsh/profile;.profile"\
         ["Xorg"]="Xorg/Xresources;.Xresources"\
-        ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\ # TODO add the restart/reload files
-        ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\ #deprecated
+        ["i3"]="i3/xinitrc;.xinitrc i3;.config/i3 i3/config.$MACHINE;.config/i3/config.local bin/lock_screen.sh;.bin/lock_screen.sh"\
+        ["i3blocks"]="i3blocks/i3blocks.conf.$MACHINE;.i3blocks.conf i3blocks;.config/i3blocks"\
         ["polybar"]="polybar/polybar.sh;.bin/polybar.sh polybar/config;.config/polybar/config"\
         ["termite"]="termite;.config/termite"\
         ["dunst"]="dunst;.config/dunst")
@@ -369,6 +384,7 @@ install_config() {
 
     echo "[*] Creating ~/.config for directory" 
     trycmd "mkdir -p $HOME/.config"
+    trycmd "mkdir -p $HOME/.config/polybar"
     # TODO clone the dotfiles directory if needed
     # TODO install ubuntu VM systemd startup + script (/usr/local/sbin/ubuntu_startup)
 
@@ -376,7 +392,7 @@ install_config() {
     for app in ${!config[@]}; do
         echo "[*] Trying to install config for $app"
         # check if app is installed
-        if [[ ! -z `which $app` ]]; then
+        if [[ ! -z `command -v $app` ]]; then
             # this is a temporary hack
             if [[ "$app" == "vim" ]]; then
                 #install_dein
@@ -386,7 +402,7 @@ install_config() {
             fi
             for file in ${config[$app]}; do
                 IFS=';' read src dst <<< "$file"
-                
+                #echo "$app $src $dst"
                 # TODO leave it alone if already simlinked
                 [[ -e ~/$dst ]] && echo "[*] Moving ~/$dst to $BACKUP"
                 [[ -e ~/$dst ]] && trycmd "mv $HOME/$dst $BACKUP/"

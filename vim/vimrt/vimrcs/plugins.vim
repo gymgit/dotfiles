@@ -1,4 +1,12 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim Man
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Loads the default man plugin
+runtime! ftplugin/man.vim
+" Leader + K should open man for current word
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => lightline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "let g:lightline = {
@@ -71,29 +79,29 @@ nnoremap <silent> <leader>gV :Gitv! --date-order<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => YouCompleteMe
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ycm_global_ycm_extra_conf = expand('~/vimrt/others/ycm_gextra_conf.py')
-let g:ycm_extra_conf_globlist = ['~/dev/projects/*', '~/ctf/srces/*']
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_always_populate_location_list = 1
-let g:ycm_error_symbol = 'E>'
-let g:ycm_warning_symbol = 'W>'
-let g:ycm_complete_in_comments = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_key_invoke_completion = '<C-Space>'
+" let g:ycm_global_ycm_extra_conf = expand('~/vimrt/others/ycm_gextra_conf.py')
+" let g:ycm_extra_conf_globlist = ['~/dev/projects/*', '~/ctf/srces/*']
+" let g:ycm_autoclose_preview_window_after_completion = 1
+" let g:ycm_autoclose_preview_window_after_insertion = 1
+" let g:ycm_always_populate_location_list = 1
+" let g:ycm_error_symbol = 'E>'
+" let g:ycm_warning_symbol = 'W>'
+" let g:ycm_complete_in_comments = 1
+" let g:ycm_seed_identifiers_with_syntax = 1
+" let g:ycm_key_invoke_completion = '<C-Space>'
 
-" Let clangd fully control code completion
-let g:ycm_clangd_uses_ycmd_caching = 0
-" Use installed clangd, not YCM-bundled clangd which doesn't get updates.
-let g:ycm_clangd_binary_path = "/usr/bin/clangd"
-let g:ycm_clangd_args = ['-background-index', '-clang-tidy']
+" " Let clangd fully control code completion
+" let g:ycm_clangd_uses_ycmd_caching = 0
+" " Use installed clangd, not YCM-bundled clangd which doesn't get updates.
+" let g:ycm_clangd_binary_path = "/usr/bin/clangd"
+" let g:ycm_clangd_args = ['-background-index', '-clang-tidy']
 
-nnoremap <silent> <leader>g :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>gd :YcmCompleter GoToDefinition<CR>
-nnoremap <silent> <leader>gi :YcmCompleter GoToImprecise<CR>
-nnoremap <silent> <leader>gx :YcmCompleter GoToReferences<CR>
-nnoremap <silent> <leader>gt :YcmCompleter GetType<CR>
-nnoremap <silent> <leader>fi :YcmCompleter FixIt<CR>
+" nnoremap <silent> <leader>g :YcmCompleter GoTo<CR>
+" nnoremap <silent> <leader>gd :YcmCompleter GoToDefinition<CR>
+" nnoremap <silent> <leader>gi :YcmCompleter GoToImprecise<CR>
+" nnoremap <silent> <leader>gx :YcmCompleter GoToReferences<CR>
+" nnoremap <silent> <leader>gt :YcmCompleter GetType<CR>
+" nnoremap <silent> <leader>fi :YcmCompleter FixIt<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => surround.vim config
@@ -268,13 +276,18 @@ nnoremap <silent> <Leader>f :NERDTreeFind<CR>
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 let NERDTreeAutoDeleteBuffer = 1
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeStatusline = "NERD"
 highlight EndOfBuffer ctermfg=black
 
-autocmd VimEnter * call NERDTreeAddKeyMap({'quickhelpText': '(f)ind in folder', 'key': 'f', 'callback': 'NERDTreeRgCommand', 'override': '1'})
+" for whatever reason this only works if NT is toggled on and off
+autocmd VimEnter * call NERDTreeAddKeyMap({'quickhelpText': 'Run (E)xtract repro on the file', 'key': 'E', 'callback': 'NERDTreeExecExtractRepro', 'override': 1, 'scope': 'FileNode'})
+autocmd VimEnter * call NERDTreeAddKeyMap({'quickhelpText': '(f)ind in folder', 'key': 'f', 'callback': 'NERDTreeRgCommand', 'override': 1})
 
 function! NERDTreeRgCommand()
     let path = g:NERDTreeFileNode.GetSelected().path.getDir().str()
@@ -283,3 +296,126 @@ function! NERDTreeRgCommand()
     wincmd p
     call RgPath(cmd, path)
 endfunction
+
+function! NERDTreeExecExtractRepro(filenode)
+    " echo a:filenode.path.str()
+    call system("extract_repro.py " . a:filenode.path.str())
+    :NERDTreeRefreshRoot
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moder CPP Highlight
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Disable function highlighting (affects both C and C++ files)
+let g:cpp_function_highlight = 1
+
+" Enable highlighting of C++11 attributes
+let g:cpp_attributes_highlight = 1
+
+" Highlight struct/class member variables (affects both C and C++ files)
+let g:cpp_member_highlight = 1
+
+" Put all standard C and C++ keywords under Vim's highlight group 'Statement'
+" (affects both C and C++ files)
+let g:cpp_simple_highlight = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Illuminate
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Don't do the nerd tree window
+let g:Illuminate_ftblacklist = ['nerdtree']
+
+" Time in milliseconds (default 0)
+let g:Illuminate_delay = 0
+
+" This should be fine tuned
+" :echo synIDattr(synID(line("."), col("."), 1), "name")
+" let g:Illuminate_ftHighlightGroups = {
+"       \ 'vim': ['vimVar', 'vimString', 'vimLineComment',
+"       \         'vimFuncName', 'vimFunction', 'vimUserFunc', 'vimFunc']
+"       \ }
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => UltiSnips
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => LSP server config
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+if executable('clangd')
+    augroup vim_lsp_cpp
+        autocmd!
+        autocmd User lsp_setup call lsp#register_server({
+                    \ 'name': 'clangd',
+                    \ 'cmd': {server_info->['clangd', '-background-index']},
+                    \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+                    \ })
+	autocmd FileType c,cpp,objc,objcpp,cc setlocal omnifunc=lsp#complete
+    augroup end
+endif
+
+" if executable('ccls')
+"    au User lsp_setup call lsp#register_server({
+"       \ 'name': 'ccls',
+"       \ 'cmd': {server_info->['ccls']},
+"       \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+"       \ 'initialization_options': {
+"       \   'highlight': { 'lsRanges' : v:true },
+"       \ },
+"       \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+"       \ })
+" endif
+
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
+set completeopt+=menuone
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" Asynccomplete binds
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
+" Force refresh completion
+"imap <c-space> <Plug>(asyncomplete_force_refresh)

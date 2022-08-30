@@ -60,6 +60,11 @@ endif
 set ttymouse=xterm2
 set mouse=a
 
+
+" Enable per-project config files
+set exrc
+set secure
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -223,8 +228,8 @@ set noswapfile
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use spaces instead of tabs
-set expandtab
+" Use tabs and not spaces
+set noexpandtab
 
 " Be smart when using tabs ;)
 set smarttab
@@ -241,6 +246,13 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+" Highlight column 110
+set colorcolumn=80
+highlight ColorColumn ctermbg=236
+
+" Light highlight characters past column 80.  Red highlight past 100.
+highlight OverLength1 ctermbg=1
+match OverLength1 /\%101v.\+/
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -290,8 +302,10 @@ nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
 let g:lastbuf = 1
-map <silent> <C-i> :exe "buf ".g:lastbuf<CR>
-au BufLeave * let g:lastbuf = bufnr("%")
+noremap <silent> <C-i> :exe "buf ".g:lastbuf<CR>
+"au BufLeave * if bufname('%') !~ 'NERD_tree_\d\+' && bufname('%') !~ ';#FZF*' | let g:lastbuf = bufnr("%")
+"au BufLeave * if buflisted == 1 | let g:lastbuf = bufnr("%")
+au BufLeave * if getbufinfo('%')[0]['listed'] == 1 | let g:lastbuf = bufnr("%")
 
 "map <leader>l :bnext<cr>
 "map <leader>h :bprevious<cr>
@@ -371,14 +385,6 @@ if has("mac") || has("macunix")
   vmap <D-k> <M-k>
 endif
 
-" Delete trailing white space on save, useful for Python and CoffeeScript ;)
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
 " use system clipboard as a default
 set clipboard=unnamedplus
@@ -570,3 +576,14 @@ endfunc
 func! CurrentFileDir(cmd)
     return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Kernel/Compile/Install/Debug Related Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" TODO config cscope
+" See this: https://stackoverflow.com/questions/33676829/vim-configuration-for-linux-kernel-development
+"Kernel Generate tags make O=. ARCH=arm64 COMPILED_SOURCE=1 cscope tags
+" set keybinds for these + fzf integration?
+" https://gist.github.com/dmlary/830597a4e94674fb6b3824260f53d99f
+" https://gist.github.com/amitab/cd051f1ea23c588109c6cfcb7d1d5776

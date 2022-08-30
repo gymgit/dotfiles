@@ -179,6 +179,7 @@ bindsym $mod+Shift+r exec --no-startup-id "/home/user/.bin/i3_restart.sh"
 bindsym $mod+Shift+x exec --no-startup-id "/home/user/.bin/lock_screen.sh"
 #bindsym $mod+Shift+x exec --no-startup-id "betterlockscreen --lock"
 
+
 #Proper exit
 
 # Power menu
@@ -281,3 +282,5 @@ exec_always --no-startup-id "xrdb -load $HOME/.Xresources"
 # start notifications
 exec --no-startup-id "dunst -config ~/.config/dunst/dunstrc"
 
+# Auto lock screen on power events
+exec --no-startup-id "xss-lock -- ~/.bin/lock_screen.sh &"

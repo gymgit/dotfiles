@@ -20,8 +20,15 @@ au FileType python map <buffer> <leader>D ?def
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
-"au FileType python set expandtab
+au FileType python set noexpandtab
 
+" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite *.py :call DeleteTrailingWS()
 
 """"""""""""""""""""""""""""""
 " => JavaScript section
@@ -58,6 +65,7 @@ endfunction
 au FileType coffee call CoffeeScriptFold()
 
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
+autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
 
 """"""""""""""""""""""""""""""
@@ -72,11 +80,66 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 au FileType markdown,html setl tabstop=2
 au FileType markdown,html setl shiftwidth=2
 
+function! TexToMd()
+    " Save cursor position
+    let l:save = winsaveview()
+
+    " Replace mintinline with ``
+    %s/\\mintinline\(\[[a-z=]*\]\)\?{[^\}]*}{\([^\}]*\)}/`\2`/g
+
+    " Replace Section with #
+    %s/\\section{\([^\}]*\)}/# \1/g
+
+    " Replace Subsection with ##
+    %s/\\subsection{\([^\}]*\)}/## \1/g
+
+    " Replace URL to [](url)
+    %s/\\url{\([^\}]*\)}/\[\](\1)/g
+
+    " Code block begin to ```c
+    %s/\\begin{ccode}.*/```c/g
+
+    " Code block end or minted block to ```
+    %s/\\begin{minted}.*\|\\end{minted}\|\\end{ccode}/```/g
+
+    " Item to *
+    %s/\\item/*/g
+
+    " Delete begin/end itemize
+    %s/\\begin{itemize}.*\|\\end{itemize}//g
+
+    " Move cursor to original position
+    call winrestview(l:save)
+endfunction
+
 """"""""""""""""""""""""""""""
 " => C, Cpp
 """"""""""""""""""""""""""""""
 au FileType c,cpp setl commentstring=//\ %s
 
+" Allow CPP man search 
+" This relies on that cppman is installed and the default man plugin is enabled
+" must run the following commands to work properly
+" cppman -c
+" cppman -m true
+
+" Improved keyword selection that includes cpp scope
+function! s:JbzCppMan()
+    let old_isk = &iskeyword
+    setl iskeyword+=:
+    let str = expand("<cword>")
+    let &l:iskeyword = old_isk
+    execute 'Man ' . str
+endfunction
+command! JbzCppMan :call s:JbzCppMan()
+
+
+"au FileType cpp nnoremap <buffer>K :JbzCppMan<CR>
+au FileType cpp nnoremap <leader>K :JbzCppMan<CR>
+
+" TODO maybe add QT browser doc lookup in browser
+" https://idie.ru/posts/vim-modern-cpp
+" TODO add maybe guttentag support
 
 """"""""""""""""""""""""""""""
 " => Latex

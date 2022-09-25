@@ -210,13 +210,14 @@ install_packages() {
         fi
     fi
 
-    if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (make cmake clang gcc g++ gdb-multiarch python2 python3 python2-pip python3-pip virtualenv virtualenvwrapper)?" ; then
+    #if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (make cmake clang gcc g++ gdb-multiarch python2 python3 python2-pip python3-pip virtualenv virtualenvwrapper)?" ; then
+    if [[ ! -z "$INSTALL_BUILD" ]] || yesno "Install build tools (make cmake clang gcc g++ gdb-multiarch python  python-pip virtualenv virtualenvwrapper)?" ; then
         echo "[*] Installing build tools"
         if [[ ! -z "$APT" ]]; then
             trycmd "$SUDO apt-get -y install make cmake clang gcc g++ gdb-multiarch python python3 python-pip python3-pip virtualenv virtualenvwrapper"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         elif [[ ! -z "$PAC" ]]; then
-            trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python2 python-pip python2-pip python-virtualenv python-virtualenvwrapper python2-virtualenv man-db man-pages ctags"
+            trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python-pip  python-virtualenv python-virtualenvwrapper man-db man-pages ctags"
             trycmd "$SUDO pacman -S --noconfirm --needed rust rust-racer mono mono-tools boost"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         fi
@@ -239,26 +240,25 @@ install_packages() {
     fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_REST"  ]] || yesno "Install trizen and update conf?" ); then
-    trycmd "$SUDO sed -i s/#[multilib]\n#Include/[multilib]\nInclude/g /etc/pacman.conf"
-    cwd=$PWD
-    trycmd "mkdir -p $HOME/progs/inst"
-    cd ~/progs/inst
-    trycmd "git clone https://aur.archlinux.org/trizen.git"
-    trycmd "cd trizen"
-    trycmd "makepkg -si"
-    trycmd "trizen -Syu -a"
-    cd $cwd
-
+        trycmd "$SUDO sed -i s/#[multilib]\n#Include/[multilib]\nInclude/g /etc/pacman.conf"
+        cwd=$PWD
+        trycmd "mkdir -p $HOME/progs/inst"
+        cd ~/progs/inst
+        trycmd "git clone https://aur.archlinux.org/trizen.git"
+        trycmd "cd trizen"
+        trycmd "makepkg -si"
+        trycmd "trizen -Syu -a"
+        cd $cwd
     fi
 
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts font-mathematica" # ttf-hack ttf-symbola"
-        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock-color compton dunst"
+        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock-color compton dunst polybar"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-font-awesome powerline-fonts" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
-        trycmd "trizen -S --noconfirm --needed polybar"
+        #trycmd "trizen -S --noconfirm --needed polybar"
         trycmd "trizen -S --noconfirm --needed nerd-fonts-hack papirus-icon-theme"
         #trycmd "trizen -S --noconfirm nerd-fonts-complete" #this is broken right now has also grown way too big
 

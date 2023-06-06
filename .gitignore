@@ -1,5 +1,8 @@
 vim/vimrt/plugins
 vim/vimrt/temp_dirs
+tmux/tmux/plugins
+tmux/tmux/resurrect
 *.local
 i3/config
 .undodir
+tags

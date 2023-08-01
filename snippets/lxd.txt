@@ -1,0 +1,2 @@
+Add the /etc/subgid /etc/subuid /etc/lxc/default.conf based on https://wiki.archlinux.org/title/Linux_Containers
+sudo systemctl start lxd.service

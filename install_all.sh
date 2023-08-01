@@ -218,7 +218,7 @@ install_packages() {
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         elif [[ ! -z "$PAC" ]]; then
             trycmd "$SUDO pacman -S --noconfirm --needed make cmake clang gcc gdb python python-pip  python-virtualenv python-virtualenvwrapper man-db man-pages ctags"
-            trycmd "$SUDO pacman -S --noconfirm --needed rust rust-racer mono mono-tools boost"
+            trycmd "$SUDO pacman -S --noconfirm --needed rustup mono mono-tools boost"
             [[ -e ~/.venvs ]] && trycmd "mkdir $HOME/.venvs"
         fi
 
@@ -254,8 +254,8 @@ install_packages() {
     if [[ ! -z "$PAC" ]] && ( [[ ! -z "$INSTALL_X"  ]] || yesno "Install xorg and i3?" ); then
         echo "[*] installing xorg"
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-server xorg-apps xorg-xinit xterm xorg-twm xorg-xclock xsel arandr"
-        trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts font-mathematica" # ttf-hack ttf-symbola"
-        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status i3lock-color compton dunst polybar"
+        trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-hack ttf-dejavu ttf-inconsolata ttf-freefont ttf-fira-code noto-fonts" # font-mathematica" # ttf-hack ttf-symbola"
+        trycmd "$SUDO pacman -S --noconfirm --needed i3-gaps rofi i3status compton dunst polybar" #i3lock-color removed
         trycmd "$SUDO pacman -S --noconfirm --needed xorg-fonts-misc ttf-font-awesome powerline-fonts" # ttf-hack ttf-symbola"
         #trycmd "trizen -S i3blocks-gaps-git nerd-fonts-complete"
         #trycmd "trizen -S --noconfirm --needed polybar"
@@ -268,6 +268,7 @@ install_packages() {
         # yaourt -S i3-gaps-git
         #spwd=`pwd`
         trycmd "$SUDO pacman -S --noconfirm --needed acpi bc lm_sensors openvpn playerctl sysstat scrot imagemagick"
+        trycmd "$SUDO pacman -S --noconfirm --needed xss-lock"
 
         #git clone https://github.com/Airblader/i3blocks-gaps.git ~/progs/install/i3block
         #cd ~/progs/install/i3block
@@ -299,9 +300,10 @@ install_packages() {
         # Intel Graphics:
         # add xf86-video-intel?
         trycmd "$SUDO pacman -S --noconfirm --needed alsa-firmware alsa-utils alsa-plugins pulseaudio-alsa pulseaudio pavucontrol"
-        trycmd "$SUDO pacman -S --noconfirm --needed openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools wireguard-arch traceroute"
+        trycmd "$SUDO pacman -S --noconfirm --needed openssh wireshark-qt dnsutils gnu-netcat nmap socat wireguard-tools traceroute"
         if ! testvm; then
-            trycmd "$SUDO pacman -S --noconfirm --needed mesa lib32-mesa vulkan-intel"
+            #trycmd "$SUDO pacman -S --noconfirm --needed mesa lib32-mesa vulkan-intel"
+            trycmd "$SUDO pacman -S --noconfirm --needed mesa vulkan-intel"
             trycmd "$SUDO pacman -S --noconfirm --needed xf86-video-intel"
             trycmd "$SUDO pacman -S --noconfirm --needed virtualbox virtualbox-host-modules-arch"
         else
@@ -311,7 +313,9 @@ install_packages() {
         trycmd "$SUDO pacman -S --noconfirm --needed keepassxc"
         trycmd "$SUDO pacman -S --noconfirm --needed unzip rsync"
         trycmd "$SUDO pacman -S --noconfirm --needed deluge firefox chromium "
-        trycmd "$SUDO pacman -S --noconfirm --needed evince nitrogen ranger termite feh"
+        #trycmd "$SUDO pacman -S --noconfirm --needed evince nitrogen ranger termite feh"
+        trycmd "$SUDO pacman -S --noconfirm --needed evince nitrogen ranger kitty feh"
+	#trycmd "trizen -S --noconfirm --needed termite"
         trycmd "$SUDO pacman -S --noconfirm --needed vlc ffmpeg"
         # trizen spotify pulseaudio-ctl
         trycmd "$SUDO pacman -S --noconfirm --needed texlive-core texlive-bibtexextra texlive-fontsextra texlive-formatsextra texlive-pictures texlive-pstricks texlive-latexextra"
@@ -333,7 +337,7 @@ install_packages() {
     # TODO research tools
 
     # trizen: simg-tools setools
-
+	# pacman -S android-tools
 
 
     #pacman -S steam ttf-liberation wqy-zenhei steam-native-runtime
@@ -363,7 +367,7 @@ install_config() {
         MACHINE='laptop'
     elif [[ $(hostname) == "MableArch" ]] || [[ $(hostname) == "castillo" ]]; then
         MACHINE='worklt2'
-    elif [[ $(hostname) == "worklt" ]]; then
+    elif [[ $(hostname) == "worklaptop" ]]; then
         MACHINE='worklt'
     fi
     

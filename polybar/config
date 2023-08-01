@@ -167,13 +167,14 @@ interval = 5
 format = <label>
 date = %m-%d
 time = %H:%M
-label = %{F#aa}  %date%%{F-}     %time%
+;label = %{F#aa}  %date%%{F-}     %time%
+label = %{F-}  %date%%{F-}     %time%
 
 
 [module/battery]
 type = internal/battery
 
-battery = BAT1
+battery = BAT0
 adapter = AC
 full-at = 98
 
@@ -244,7 +245,7 @@ type = internal/fs
 interval = 25
 
 mount-0 = /
-mount-1 = /home
+;mount-1 = /home
 
 label-mounted =   %free:6%
 label-mounted-foreground = ${colors.dampen}
@@ -275,7 +276,8 @@ label-muted-foreground = ${colors.unfocus}
 
 [module/wireless-network]
 type = internal/network
-interface = wlp0s20f3
+;interface = wlp0s20f3
+interface = wlan0
 interval = 2.0
 ping-interval = 10
 

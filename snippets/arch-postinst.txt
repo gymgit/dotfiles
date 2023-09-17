@@ -1,6 +1,12 @@
 # enable dhcpd
 sudo systemctl start dhcpcd
 sudo systemctl enable dhcpcd
+sudo systemctl enable iwd
+sudo systemctl start iwd
+sudo systemctl enable systemd-resolved
+sudo systemctl start systemd-resolved
+#edit /etc/systemd/resolved.conf to change DNS servers
+sudo ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 sudo pacman -S vim xorg-server xorg-server-utils xorg-xinit mesa xterm xorg-twm xorg-xclock
 cp /etc/X11/xinit/xinitrc ~/.xinitrc

@@ -20,6 +20,9 @@ cgdisk /dev/sdb
 cryptsetup -c aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 5000 -y --use-random luksFormat /dev/sdb1
 cryptsetup open --type luks /dev/sdb1 lvm
 
+####################
+## Using LVM + EXT4
+
 # lvm
 pvcreate /dev/mapper/lvm
 vgcreate vg0 /dev/mapper/lvm
@@ -46,12 +49,53 @@ mount /dev/mapper/vg0-var /mnt/var
 
 swapon /dev/mapper/vg0-swap
 
+########################
+## Using BTRFS
+
+mkfs.btrfs --label system /dev/mapper/lvm
+mount -t btrfs LABEL=system /mnt
+
+btrfs subvolume create /mnt/@root
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@varlog
+btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@swap
+
+chattr +C /mnt/@varlog
+chattr +C /mnt/@swap
+
+umount -R /mnt
+
+# Use LZO for fast Nvme SSD, ZSTD otherwise
+mount -t btrfs -o defaults,x-mount.mkdir,compress=lzo,ssd,noatime,subvol=@root LABEL=system /mnt
+mount -t btrfs -o defaults,x-mount.mkdir,compress=lzo,ssd,noatime,subvol=@home LABEL=system /mnt/home
+mount -t btrfs -o defaults,x-mount.mkdir,ssd,noatime,subvol=@varlog LABEL=system /mnt/var/log
+mount -t btrfs -o defaults,x-mount.mkdir,compress=lzo,ssd,noatime,subvol=@snapshots LABEL=system /mnt/.snapshots
+mount -t btrfs -o defaults,x-mount.mkdir,ssd,noatime,subvol=@swap LABEL=system /mnt/swap
+
+mkdir /mnt/boot
+mount /dev/XXX2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/XXX1 /mnt/boot/efi
+touch /mnt/swap/swapfile
+
+# Check if C is enabled
+lsattr /mnt/swap/swapfile
+
+# 32 GB swap
+dd if=/dev/zero of=/mnt/swap/swapfile bs=1024K count=32768
+mkswap /mnt/swap/swapfile  
+swapon /mnt/swap/swapfile  
+
+## END OF SPLIT
+################
+
 #install base system
 #pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog
 # chose bootmanager either grub or refind see secboot info
-#pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog wpa_supplicant wifi-menu neovim sudo tmux intel-ucode lvm2 linux linux-lts linux-firmware netctl dhcpcd ifplugd
+#pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog wpa_supplicant wifi-menu neovim sudo tmux intel-ucode lvm2 linux linux-lts linux-firmware netctl dhcpcd ifplugd 
 # Create network connection with iwctl
-pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog iwd neovim sudo tmux intel-ucode lvm2 linux linux-lts linux-firmware netctl dhcpcd ifplugd openssh
+pacstrap /mnt base base-devel grub zsh vim git efibootmgr dialog iwd neovim sudo tmux intel-ucode lvm2 linux linux-lts linux-firmware netctl dhcpcd ifplugd openssh btrfs-progs os-prober dosfstools mtools 
 # TODO: move this into a wgetable SH script
 
 # 'install' fstab
@@ -65,8 +109,9 @@ arch-chroot /mnt /bin/bash
 
 # add /etc/mkinitcpio.conf
 # ADD encrypt lvm2 for luks resume for suspend to disk
-HOOKS="... encrypt lvm2 ... filesystems ... resume fsck"
-MODULES += ext4
+HOOKS="... encrypt lvm2 btrfs ... filesystems ... resume fsck"
+# MODULES += ext4
+BINARIES=(btrfsck)
 mkinitcpio -p linux
 
 
@@ -94,10 +139,17 @@ passwd gym
 # setup wheel sudo
 visudo
 
+# Fix pacman keys
+pacman-key --init
+pacman-key --populate
+
 # install setup grub
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch_grub --recheck
 # grub-install
 # In /etc/default/grub edit the line GRUB_CMDLINE_LINUX to GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdb1:luks:allow-discards resume=/dev/vg0/swap" then run:
+# For BTRFS add to the cmd line: cryptdevice=/dev/sdb1:lvm:allow-discards  bgrt_disable root=LABEL=system rootflags=subvol=@root
+# TODO fix hibernate
+# GRUB_DISABLE_OS_PROBER=false
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # for nonefi
